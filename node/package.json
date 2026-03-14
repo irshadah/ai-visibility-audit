@@ -1,0 +1,9 @@
+{
+  "name": "agentic-readiness-cli",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "report": "node cli/report.js ../out/report.json"
+  }
+}
