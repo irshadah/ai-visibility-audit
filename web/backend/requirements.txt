@@ -1,0 +1,10 @@
+flask
+flask-cors
+playwright
+beautifulsoup4
+lxml
+python-dotenv
+openai
+google-genai
+anthropic
+psycopg[binary]

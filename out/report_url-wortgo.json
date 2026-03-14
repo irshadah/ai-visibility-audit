@@ -1,0 +1,979 @@
+{
+  "assessments": {
+    "GEO": {
+      "scoring_meta": {
+        "ruleset_version": "2026.03",
+        "generated_at_utc": "2026-03-11T22:33:42.670505+00:00",
+        "rubric_source": "global_fallback"
+      },
+      "summary": {
+        "product_count": 1,
+        "scored_count": 1,
+        "blocked_count": 0,
+        "average_score": 65
+      },
+      "products": [
+        {
+          "product_id": "url::http://localhost:3001/",
+          "url": "http://localhost:3001/",
+          "category_scores": {
+            "geo_structure": 84.0,
+            "content_quality": 36.8,
+            "semantic_quality": 61.48,
+            "ux_signals": 84.0,
+            "feed_quality": 0.0
+          },
+          "overall_score": 65,
+          "confidence": 100.0,
+          "blocked": false,
+          "issues": {
+            "high": [
+              {
+                "rule_id": "G7",
+                "message": "Rule G7 failed or partially failed",
+                "priority": "high",
+                "priority_score": 15.0,
+                "evidence": "field=page.variant_clarity value=False"
+              },
+              {
+                "rule_id": "C2",
+                "message": "Rule C2 failed or partially failed",
+                "priority": "high",
+                "priority_score": 8.2,
+                "evidence": "field=content.description_length value=177"
+              },
+              {
+                "rule_id": "C3",
+                "message": "Rule C3 failed or partially failed",
+                "priority": "high",
+                "priority_score": 25.0,
+                "evidence": "field=content.attribute_completeness value=0.0"
+              },
+              {
+                "rule_id": "C5",
+                "message": "Rule C5 failed or partially failed",
+                "priority": "high",
+                "priority_score": 15.0,
+                "evidence": "field=content.policy_clarity value=False"
+              },
+              {
+                "rule_id": "C6",
+                "message": "Rule C6 failed or partially failed",
+                "priority": "high",
+                "priority_score": 10.0,
+                "evidence": "field=content.review_presence value=False"
+              },
+              {
+                "rule_id": "C7",
+                "message": "Rule C7 failed or partially failed",
+                "priority": "high",
+                "priority_score": 10.0,
+                "evidence": "field=content.support_trust_info value=False"
+              },
+              {
+                "rule_id": "L3",
+                "message": "Rule L3 failed or partially failed",
+                "priority": "high",
+                "priority_score": 19.81,
+                "evidence": "field=semantic.query_answerability value=0.0094"
+              },
+              {
+                "rule_id": "U3",
+                "message": "Rule U3 failed or partially failed",
+                "priority": "high",
+                "priority_score": 8.0,
+                "evidence": "field=ux.media_quality value=0.2"
+              }
+            ],
+            "medium": [
+              {
+                "rule_id": "G2",
+                "message": "Rule G2 failed or partially failed",
+                "priority": "medium",
+                "priority_score": 5.0,
+                "evidence": "field=schema.required_field_coverage value=0.8"
+              },
+              {
+                "rule_id": "L2",
+                "message": "Rule L2 failed or partially failed",
+                "priority": "medium",
+                "priority_score": 6.0,
+                "evidence": "field=semantic.entity_consistency value=0.7"
+              },
+              {
+                "rule_id": "L4",
+                "message": "Rule L4 failed or partially failed",
+                "priority": "medium",
+                "priority_score": 5.0,
+                "evidence": "field=semantic.factual_grounding value=0.75"
+              }
+            ],
+            "low": []
+          },
+          "rationale": [
+            {
+              "rule_id": "G1",
+              "category": "geo_structure",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "G2",
+              "category": "geo_structure",
+              "raw_value": 0.8,
+              "normalized_score": 0.8,
+              "score_impact": -6.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "G3",
+              "category": "geo_structure",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "G4",
+              "category": "geo_structure",
+              "raw_value": 1.0,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "G5",
+              "category": "geo_structure",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "G6",
+              "category": "geo_structure",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "G7",
+              "category": "geo_structure",
+              "raw_value": false,
+              "normalized_score": 0.0,
+              "score_impact": -10.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "C1",
+              "category": "content_quality",
+              "raw_value": 47,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "C2",
+              "category": "content_quality",
+              "raw_value": 177,
+              "normalized_score": 0.59,
+              "score_impact": -8.2,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "C3",
+              "category": "content_quality",
+              "raw_value": 0.0,
+              "normalized_score": 0.0,
+              "score_impact": -25.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "C4",
+              "category": "content_quality",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "C5",
+              "category": "content_quality",
+              "raw_value": false,
+              "normalized_score": 0.0,
+              "score_impact": -10.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "C6",
+              "category": "content_quality",
+              "raw_value": false,
+              "normalized_score": 0.0,
+              "score_impact": -10.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "C7",
+              "category": "content_quality",
+              "raw_value": false,
+              "normalized_score": 0.0,
+              "score_impact": -10.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "L1",
+              "category": "semantic_quality",
+              "raw_value": 0,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "L2",
+              "category": "semantic_quality",
+              "raw_value": 0.7,
+              "normalized_score": 0.7,
+              "score_impact": -7.5,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "L3",
+              "category": "semantic_quality",
+              "raw_value": 0.0094,
+              "normalized_score": 0.0094,
+              "score_impact": -24.77,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "L4",
+              "category": "semantic_quality",
+              "raw_value": 0.75,
+              "normalized_score": 0.75,
+              "score_impact": -6.25,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "U1",
+              "category": "ux_signals",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "U2",
+              "category": "ux_signals",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "U3",
+              "category": "ux_signals",
+              "raw_value": 0.2,
+              "normalized_score": 0.2,
+              "score_impact": -16.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "U4",
+              "category": "ux_signals",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "F1",
+              "category": "feed_quality",
+              "raw_value": null,
+              "normalized_score": null,
+              "score_impact": 0.0,
+              "status": "not_applicable_missing_input"
+            },
+            {
+              "rule_id": "F2",
+              "category": "feed_quality",
+              "raw_value": null,
+              "normalized_score": null,
+              "score_impact": 0.0,
+              "status": "not_applicable_missing_input"
+            },
+            {
+              "rule_id": "F3",
+              "category": "feed_quality",
+              "raw_value": null,
+              "normalized_score": null,
+              "score_impact": 0.0,
+              "status": "not_applicable_missing_input"
+            },
+            {
+              "rule_id": "F4",
+              "category": "feed_quality",
+              "raw_value": null,
+              "normalized_score": null,
+              "score_impact": 0.0,
+              "status": "not_applicable_missing_input"
+            },
+            {
+              "rule_id": "F5",
+              "category": "feed_quality",
+              "raw_value": null,
+              "normalized_score": null,
+              "score_impact": 0.0,
+              "status": "not_applicable_missing_input"
+            }
+          ],
+          "recommendations": [
+            {
+              "rule_id": "G2",
+              "action": "Add missing required Product/Offer schema fields.",
+              "estimated_lift": "+4 to +6"
+            },
+            {
+              "rule_id": "G7",
+              "action": "Clarify variant selection (size, color) in schema or structured data.",
+              "estimated_lift": "+6 to +10"
+            },
+            {
+              "rule_id": "C2",
+              "action": "Expand description with concrete specs and use-cases.",
+              "estimated_lift": "+5 to +8"
+            },
+            {
+              "rule_id": "C3",
+              "action": "Complete required and recommended product attributes.",
+              "estimated_lift": "+15 to +25"
+            },
+            {
+              "rule_id": "C5",
+              "action": "Add shipping, returns, or policy information.",
+              "estimated_lift": "+6 to +10"
+            },
+            {
+              "rule_id": "C6",
+              "action": "Add customer reviews or a rating widget to the product page.",
+              "estimated_lift": "+6 to +10"
+            },
+            {
+              "rule_id": "C7",
+              "action": "Add support or trust signals (contact, guarantees, certifications).",
+              "estimated_lift": "+6 to +10"
+            },
+            {
+              "rule_id": "L2",
+              "action": "Align brand/model/price entities between schema and visible content.",
+              "estimated_lift": "+4 to +8"
+            },
+            {
+              "rule_id": "L3",
+              "action": "Add explicit Q&A or specs for compatibility, fit, and use-case queries.",
+              "estimated_lift": "+15 to +25"
+            },
+            {
+              "rule_id": "L4",
+              "action": "Add verifiable specs and factual claims backed by structured data.",
+              "estimated_lift": "+4 to +6"
+            },
+            {
+              "rule_id": "U3",
+              "action": "Use higher-quality or properly sized images and media.",
+              "estimated_lift": "+10 to +16"
+            }
+          ],
+          "ai_optimization_suggestions": [
+            "Add explicit Q&A content for compatibility, fit, and use-case queries.",
+            "Increase attribute density for AI retrieval and ranking signals."
+          ],
+          "regression": {
+            "has_previous": false
+          }
+        }
+      ]
+    },
+    "AEO": {
+      "scoring_meta": {
+        "ruleset_version": "2026.03",
+        "generated_at_utc": "2026-03-11T22:33:42.671795+00:00",
+        "rubric_source": "global_fallback"
+      },
+      "summary": {
+        "product_count": 1,
+        "scored_count": 1,
+        "blocked_count": 0,
+        "average_score": 48
+      },
+      "products": [
+        {
+          "product_id": "url::http://localhost:3001/",
+          "url": "http://localhost:3001/",
+          "category_scores": {
+            "answer_structure": 30.0,
+            "snippet_readiness": 50.0,
+            "entity_clarity": 82.0,
+            "voice_readiness": 30.33
+          },
+          "overall_score": 48,
+          "confidence": 100.0,
+          "blocked": false,
+          "issues": {
+            "high": [
+              {
+                "rule_id": "A2",
+                "message": "Rule A2 failed or partially failed",
+                "priority": "high",
+                "priority_score": 20.0,
+                "evidence": "field=aeo.howto_schema_present value=False"
+              },
+              {
+                "rule_id": "A3",
+                "message": "Rule A3 failed or partially failed",
+                "priority": "high",
+                "priority_score": 20.0,
+                "evidence": "field=aeo.direct_answer_patterns value=0.0"
+              },
+              {
+                "rule_id": "A4",
+                "message": "Rule A4 failed or partially failed",
+                "priority": "high",
+                "priority_score": 10.0,
+                "evidence": "field=aeo.list_structure_ratio value=0.0"
+              },
+              {
+                "rule_id": "A5",
+                "message": "Rule A5 failed or partially failed",
+                "priority": "high",
+                "priority_score": 10.0,
+                "evidence": "field=aeo.table_presence value=False"
+              },
+              {
+                "rule_id": "A6",
+                "message": "Rule A6 failed or partially failed",
+                "priority": "high",
+                "priority_score": 20.0,
+                "evidence": "field=aeo.concise_paragraph_ratio value=0.0"
+              },
+              {
+                "rule_id": "A7",
+                "message": "Rule A7 failed or partially failed",
+                "priority": "high",
+                "priority_score": 20.0,
+                "evidence": "field=aeo.heading_hierarchy_valid value=False"
+              },
+              {
+                "rule_id": "A13",
+                "message": "Rule A13 failed or partially failed",
+                "priority": "high",
+                "priority_score": 20.0,
+                "evidence": "field=aeo.question_coverage value=0.0"
+              },
+              {
+                "rule_id": "A15",
+                "message": "Rule A15 failed or partially failed",
+                "priority": "high",
+                "priority_score": 19.81,
+                "evidence": "field=semantic.query_answerability value=0.0094"
+              }
+            ],
+            "medium": [
+              {
+                "rule_id": "A10",
+                "message": "Rule A10 failed or partially failed",
+                "priority": "medium",
+                "priority_score": 6.0,
+                "evidence": "field=semantic.entity_consistency value=0.7"
+              },
+              {
+                "rule_id": "A12",
+                "message": "Rule A12 failed or partially failed",
+                "priority": "medium",
+                "priority_score": 5.0,
+                "evidence": "field=semantic.factual_grounding value=0.75"
+              }
+            ],
+            "low": []
+          },
+          "rationale": [
+            {
+              "rule_id": "A1",
+              "category": "answer_structure",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A2",
+              "category": "answer_structure",
+              "raw_value": false,
+              "normalized_score": 0.0,
+              "score_impact": -25.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A3",
+              "category": "answer_structure",
+              "raw_value": 0.0,
+              "normalized_score": 0.0,
+              "score_impact": -25.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A4",
+              "category": "answer_structure",
+              "raw_value": 0.0,
+              "normalized_score": 0.0,
+              "score_impact": -10.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A5",
+              "category": "answer_structure",
+              "raw_value": false,
+              "normalized_score": 0.0,
+              "score_impact": -10.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A6",
+              "category": "snippet_readiness",
+              "raw_value": 0.0,
+              "normalized_score": 0.0,
+              "score_impact": -25.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A7",
+              "category": "snippet_readiness",
+              "raw_value": false,
+              "normalized_score": 0.0,
+              "score_impact": -25.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A8",
+              "category": "snippet_readiness",
+              "raw_value": 47,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A9",
+              "category": "snippet_readiness",
+              "raw_value": 177,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A10",
+              "category": "entity_clarity",
+              "raw_value": 0.7,
+              "normalized_score": 0.7,
+              "score_impact": -10.5,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A11",
+              "category": "entity_clarity",
+              "raw_value": 0,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A12",
+              "category": "entity_clarity",
+              "raw_value": 0.75,
+              "normalized_score": 0.75,
+              "score_impact": -7.5,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A13",
+              "category": "voice_readiness",
+              "raw_value": 0.0,
+              "normalized_score": 0.0,
+              "score_impact": -35.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A14",
+              "category": "voice_readiness",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A15",
+              "category": "voice_readiness",
+              "raw_value": 0.0094,
+              "normalized_score": 0.0094,
+              "score_impact": -34.67,
+              "status": "evaluated"
+            }
+          ],
+          "recommendations": [
+            {
+              "rule_id": "A2",
+              "action": "Add HowTo schema for step-by-step or instructional content.",
+              "estimated_lift": "+15 to +25"
+            },
+            {
+              "rule_id": "A3",
+              "action": "Use direct-answer phrasing (e.g. \"The X is Y\", \"You can...\") in key paragraphs.",
+              "estimated_lift": "+15 to +25"
+            },
+            {
+              "rule_id": "A4",
+              "action": "Add bullet or numbered lists for scannable answers.",
+              "estimated_lift": "+6 to +10"
+            },
+            {
+              "rule_id": "A5",
+              "action": "Add tables for comparative or factual data.",
+              "estimated_lift": "+6 to +10"
+            },
+            {
+              "rule_id": "A6",
+              "action": "Break content into concise paragraphs (under 50 words) for snippet extraction.",
+              "estimated_lift": "+15 to +25"
+            },
+            {
+              "rule_id": "A7",
+              "action": "Use exactly one H1 and logical heading hierarchy (H2, H3).",
+              "estimated_lift": "+15 to +25"
+            },
+            {
+              "rule_id": "A10",
+              "action": "Align entity names (brand, product) across schema and visible content.",
+              "estimated_lift": "+6 to +11"
+            },
+            {
+              "rule_id": "A12",
+              "action": "Back factual claims with structured data or clear specs.",
+              "estimated_lift": "+4 to +8"
+            },
+            {
+              "rule_id": "A13",
+              "action": "Include question-and-answer style content for voice and featured snippets.",
+              "estimated_lift": "+21 to +35"
+            },
+            {
+              "rule_id": "A15",
+              "action": "Add explicit Q&A or specs that answer common queries.",
+              "estimated_lift": "+21 to +35"
+            }
+          ],
+          "ai_optimization_suggestions": [
+            "Add explicit Q&A content for compatibility, fit, and use-case queries.",
+            "Increase attribute density for AI retrieval and ranking signals."
+          ],
+          "regression": {
+            "has_previous": false
+          }
+        }
+      ]
+    },
+    "SEO": {
+      "scoring_meta": {
+        "ruleset_version": "2026.03",
+        "generated_at_utc": "2026-03-11T22:33:42.672265+00:00",
+        "rubric_source": "global_fallback"
+      },
+      "summary": {
+        "product_count": 1,
+        "scored_count": 1,
+        "blocked_count": 0,
+        "average_score": 46
+      },
+      "products": [
+        {
+          "product_id": "url::http://localhost:3001/",
+          "url": "http://localhost:3001/",
+          "category_scores": {
+            "technical_seo": 100.0,
+            "on_page_seo": 51.88,
+            "content_seo": 1.22,
+            "link_and_media": 0.0
+          },
+          "overall_score": 46,
+          "confidence": 100.0,
+          "blocked": false,
+          "issues": {
+            "high": [
+              {
+                "rule_id": "S6",
+                "message": "Rule S6 failed or partially failed",
+                "priority": "high",
+                "priority_score": 20.0,
+                "evidence": "field=seo.h1_present value=False"
+              },
+              {
+                "rule_id": "S7",
+                "message": "Rule S7 failed or partially failed",
+                "priority": "high",
+                "priority_score": 25.0,
+                "evidence": "field=seo.h1_count value=0"
+              },
+              {
+                "rule_id": "S11",
+                "message": "Rule S11 failed or partially failed",
+                "priority": "high",
+                "priority_score": 24.42,
+                "evidence": "field=seo.word_count value=7"
+              },
+              {
+                "rule_id": "S12",
+                "message": "Rule S12 failed or partially failed",
+                "priority": "high",
+                "priority_score": 20.0,
+                "evidence": "field=content.attribute_completeness value=0.0"
+              },
+              {
+                "rule_id": "S13",
+                "message": "Rule S13 failed or partially failed",
+                "priority": "high",
+                "priority_score": 19.81,
+                "evidence": "field=semantic.query_answerability value=0.0094"
+              },
+              {
+                "rule_id": "S14",
+                "message": "Rule S14 failed or partially failed",
+                "priority": "high",
+                "priority_score": 20.0,
+                "evidence": "field=seo.internal_link_count value=0"
+              },
+              {
+                "rule_id": "S15",
+                "message": "Rule S15 failed or partially failed",
+                "priority": "high",
+                "priority_score": 15.0,
+                "evidence": "field=seo.external_link_count value=0"
+              },
+              {
+                "rule_id": "S16",
+                "message": "Rule S16 failed or partially failed",
+                "priority": "high",
+                "priority_score": 20.0,
+                "evidence": "field=seo.image_alt_ratio value=0.0"
+              }
+            ],
+            "medium": [],
+            "low": [
+              {
+                "rule_id": "S8",
+                "message": "Rule S8 failed or partially failed",
+                "priority": "low",
+                "priority_score": 1.2,
+                "evidence": "field=content.title_length value=47"
+              },
+              {
+                "rule_id": "S9",
+                "message": "Rule S9 failed or partially failed",
+                "priority": "low",
+                "priority_score": 1.92,
+                "evidence": "field=seo.meta_desc_length value=177"
+              }
+            ]
+          },
+          "rationale": [
+            {
+              "rule_id": "S1",
+              "category": "technical_seo",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S2",
+              "category": "technical_seo",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S3",
+              "category": "technical_seo",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S4",
+              "category": "technical_seo",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S5",
+              "category": "technical_seo",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S6",
+              "category": "on_page_seo",
+              "raw_value": false,
+              "normalized_score": 0.0,
+              "score_impact": -20.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S7",
+              "category": "on_page_seo",
+              "raw_value": 0,
+              "normalized_score": 0.0,
+              "score_impact": -25.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S8",
+              "category": "on_page_seo",
+              "raw_value": 47,
+              "normalized_score": 0.94,
+              "score_impact": -1.2,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S9",
+              "category": "on_page_seo",
+              "raw_value": 177,
+              "normalized_score": 0.904,
+              "score_impact": -1.92,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S10",
+              "category": "on_page_seo",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S11",
+              "category": "content_seo",
+              "raw_value": 7,
+              "normalized_score": 0.0233,
+              "score_impact": -39.07,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S12",
+              "category": "content_seo",
+              "raw_value": 0.0,
+              "normalized_score": 0.0,
+              "score_impact": -30.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S13",
+              "category": "content_seo",
+              "raw_value": 0.0094,
+              "normalized_score": 0.0094,
+              "score_impact": -29.72,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S14",
+              "category": "link_and_media",
+              "raw_value": 0,
+              "normalized_score": 0.0,
+              "score_impact": -35.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S15",
+              "category": "link_and_media",
+              "raw_value": 0,
+              "normalized_score": 0.0,
+              "score_impact": -35.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S16",
+              "category": "link_and_media",
+              "raw_value": 0.0,
+              "normalized_score": 0.0,
+              "score_impact": -30.0,
+              "status": "evaluated"
+            }
+          ],
+          "recommendations": [
+            {
+              "rule_id": "S6",
+              "action": "Add at least one H1 heading to the page.",
+              "estimated_lift": "+12 to +20"
+            },
+            {
+              "rule_id": "S7",
+              "action": "Use exactly one H1 per page for clear topical focus.",
+              "estimated_lift": "+15 to +25"
+            },
+            {
+              "rule_id": "S8",
+              "action": "Keep title tag between 50 and 60 characters for search snippets.",
+              "estimated_lift": "+1 to +1"
+            },
+            {
+              "rule_id": "S9",
+              "action": "Keep meta description between 120 and 160 characters.",
+              "estimated_lift": "+1 to +2"
+            },
+            {
+              "rule_id": "S11",
+              "action": "Increase word count to at least 300 words of substantive content.",
+              "estimated_lift": "+23 to +39"
+            },
+            {
+              "rule_id": "S12",
+              "action": "Complete product attributes (material, size, brand, etc.) for relevance.",
+              "estimated_lift": "+18 to +30"
+            },
+            {
+              "rule_id": "S13",
+              "action": "Add content that answers common search queries (Q&A, specs).",
+              "estimated_lift": "+18 to +30"
+            },
+            {
+              "rule_id": "S14",
+              "action": "Add internal links to related pages (at least 3).",
+              "estimated_lift": "+21 to +35"
+            },
+            {
+              "rule_id": "S15",
+              "action": "Add at least one relevant external link to authoritative sources.",
+              "estimated_lift": "+21 to +35"
+            },
+            {
+              "rule_id": "S16",
+              "action": "Add descriptive alt text to all images.",
+              "estimated_lift": "+18 to +30"
+            }
+          ],
+          "ai_optimization_suggestions": [
+            "Add explicit Q&A content for compatibility, fit, and use-case queries.",
+            "Increase attribute density for AI retrieval and ranking signals."
+          ],
+          "regression": {
+            "has_previous": false
+          }
+        }
+      ]
+    }
+  }
+}

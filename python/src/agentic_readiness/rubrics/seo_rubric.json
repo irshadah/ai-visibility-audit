@@ -1,0 +1,60 @@
+{
+  "version": "2026.03",
+  "category_weights": {
+    "technical_seo": 0.30,
+    "on_page_seo": 0.30,
+    "content_seo": 0.20,
+    "link_and_media": 0.20
+  },
+  "confidence_gate": 70,
+  "confidence_paths": [
+    "content.title_length",
+    "seo.meta_desc_present",
+    "seo.h1_present",
+    "seo.canonical_present"
+  ],
+  "rules": {
+    "technical_seo": [
+      {"id": "S1", "weight": 25, "type": "binary", "field": "page.indexable", "impact": 5},
+      {"id": "S2", "weight": 25, "type": "binary", "field": "seo.canonical_present", "impact": 4, "missing_behavior": "zero"},
+      {"id": "S3", "weight": 25, "type": "binary", "field": "seo.canonical_self_ref", "impact": 4},
+      {"id": "S4", "weight": 15, "type": "binary", "field": "seo.hreflang_present", "impact": 3},
+      {"id": "S5", "weight": 10, "type": "binary", "field": "seo.robots_valid", "impact": 3}
+    ],
+    "on_page_seo": [
+      {"id": "S6", "weight": 20, "type": "binary", "field": "seo.h1_present", "impact": 4, "missing_behavior": "zero"},
+      {"id": "S7", "weight": 25, "type": "range", "field": "seo.h1_count", "min": 1, "max": 1, "impact": 5},
+      {"id": "S8", "weight": 20, "type": "range", "field": "content.title_length", "min": 50, "max": 60, "impact": 4},
+      {"id": "S9", "weight": 20, "type": "range", "field": "seo.meta_desc_length", "min": 120, "max": 160, "impact": 4},
+      {"id": "S10", "weight": 15, "type": "binary", "field": "seo.meta_desc_present", "impact": 3, "missing_behavior": "zero"}
+    ],
+    "content_seo": [
+      {"id": "S11", "weight": 40, "type": "threshold", "field": "seo.word_count", "min": 300, "impact": 5},
+      {"id": "S12", "weight": 30, "type": "ratio", "field": "content.attribute_completeness", "impact": 4},
+      {"id": "S13", "weight": 30, "type": "ratio", "field": "semantic.query_answerability", "impact": 4}
+    ],
+    "link_and_media": [
+      {"id": "S14", "weight": 35, "type": "threshold", "field": "seo.internal_link_count", "min": 3, "impact": 4},
+      {"id": "S15", "weight": 35, "type": "threshold", "field": "seo.external_link_count", "min": 1, "impact": 3},
+      {"id": "S16", "weight": 30, "type": "ratio", "field": "seo.image_alt_ratio", "impact": 4}
+    ]
+  },
+  "recommendation_map": {
+    "S1": "Allow indexing; remove noindex from robots meta if appropriate.",
+    "S2": "Add a canonical link tag pointing to the preferred URL.",
+    "S3": "Set canonical URL to this page's URL (self-referencing canonical).",
+    "S4": "Add hreflang tags for multi-language or regional variants.",
+    "S5": "Ensure robots meta does not block indexing (no noindex).",
+    "S6": "Add at least one H1 heading to the page.",
+    "S7": "Use exactly one H1 per page for clear topical focus.",
+    "S8": "Keep title tag between 50 and 60 characters for search snippets.",
+    "S9": "Keep meta description between 120 and 160 characters.",
+    "S10": "Add a unique meta description for the page.",
+    "S11": "Increase word count to at least 300 words of substantive content.",
+    "S12": "Complete product attributes (material, size, brand, etc.) for relevance.",
+    "S13": "Add content that answers common search queries (Q&A, specs).",
+    "S14": "Add internal links to related pages (at least 3).",
+    "S15": "Add at least one relevant external link to authoritative sources.",
+    "S16": "Add descriptive alt text to all images."
+  }
+}

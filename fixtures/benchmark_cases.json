@@ -1,0 +1,92 @@
+[
+  {
+    "id": "pdp-1",
+    "url": "https://shop.example.com/product/jacket-1",
+    "html": "<html><head><title>Ski Jacket Alpha</title><meta name=\"description\" content=\"Warm ski jacket for alpine conditions.\" /><meta property=\"og:type\" content=\"product\" /><script type=\"application/ld+json\">{\"@type\":\"Product\",\"name\":\"Ski Jacket Alpha\",\"brand\":{\"name\":\"Alpinex\"},\"offers\":{\"price\":\"199\",\"availability\":\"InStock\"}}</script></head><body><h1>Ski Jacket Alpha</h1></body></html>",
+    "expected": {"page_type": "pdp", "rules": {"G1": true, "S6": true, "S10": true, "A1": false, "A2": false}}
+  },
+  {
+    "id": "pdp-2",
+    "url": "https://shop.example.com/product/helmet-2",
+    "html": "<html><head><title>Helmet 2</title><meta property=\"og:type\" content=\"product\" /><script type=\"application/ld+json\">{\"@type\":\"Product\",\"name\":\"Helmet 2\",\"brand\":\"Alpinex\",\"offers\":{\"price\":\"99\",\"availability\":\"InStock\"}}</script></head><body><h1>Helmet 2</h1></body></html>",
+    "expected": {"page_type": "pdp", "rules": {"G1": true, "S6": true, "S10": false, "A1": false, "A2": false}}
+  },
+  {
+    "id": "pdp-3-faq",
+    "url": "https://shop.example.com/product/boots-3",
+    "html": "<html><head><title>Boots 3</title><meta name=\"description\" content=\"Boots with fit guidance.\" /><meta property=\"og:type\" content=\"product\" /><script type=\"application/ld+json\">{\"@type\":\"FAQPage\"}</script><script type=\"application/ld+json\">{\"@type\":\"Product\",\"name\":\"Boots 3\",\"brand\":\"Alpinex\",\"offers\":{\"price\":\"249\",\"availability\":\"InStock\"}}</script></head><body><h1>Boots 3</h1></body></html>",
+    "expected": {"page_type": "pdp", "rules": {"G1": true, "S6": true, "S10": true, "A1": true, "A2": false}}
+  },
+  {
+    "id": "plp-1",
+    "url": "https://shop.example.com/category/ski-collection",
+    "html": "<html><head><title>Ski Collection</title><meta name=\"description\" content=\"Discover our ski collection.\" /><meta property=\"og:type\" content=\"website\" /><script type=\"application/ld+json\">{\"@type\":\"ItemList\"}</script></head><body><h1>Ski Collection</h1><main><p>€ 100</p><p>€ 120</p><p>€ 140</p><p>€ 170</p></main></body></html>",
+    "expected": {"page_type": "plp_category", "rules": {"G1": false, "S6": true, "S10": true, "A1": false, "A2": false}}
+  },
+  {
+    "id": "plp-2",
+    "url": "https://shop.example.com/collection/new-arrivals",
+    "html": "<html><head><title>New Arrivals</title><meta property=\"og:type\" content=\"website\" /></head><body><h1>New Arrivals</h1><main><ul><li>Item</li></ul></main></body></html>",
+    "expected": {"page_type": "plp_category", "rules": {"G1": false, "S6": true, "S10": false, "A1": false, "A2": false}}
+  },
+  {
+    "id": "article-1",
+    "url": "https://shop.example.com/blog/how-to-layer-ski-clothing",
+    "html": "<html><head><title>How to Layer Ski Clothing</title><meta name=\"description\" content=\"Step-by-step layering guide.\" /><meta property=\"og:type\" content=\"article\" /><script type=\"application/ld+json\">{\"@type\":\"HowTo\"}</script></head><body><article><h1>How to Layer Ski Clothing</h1><p>You can start with a base layer.</p></article></body></html>",
+    "expected": {"page_type": "article", "rules": {"G1": false, "S6": true, "S10": true, "A1": false, "A2": true}}
+  },
+  {
+    "id": "article-2-faq",
+    "url": "https://shop.example.com/blog/ski-faq",
+    "html": "<html><head><title>Ski FAQ</title><meta name=\"description\" content=\"Answers to common ski questions.\" /><script type=\"application/ld+json\">{\"@type\":\"FAQPage\"}</script></head><body><article><h1>Ski FAQ</h1></article></body></html>",
+    "expected": {"page_type": "article", "rules": {"G1": false, "S6": true, "S10": true, "A1": true, "A2": false}}
+  },
+  {
+    "id": "home-1",
+    "url": "https://shop.example.com/",
+    "html": "<html><head><title>Home</title><meta property=\"og:type\" content=\"website\" /></head><body><h1>Welcome</h1></body></html>",
+    "expected": {"page_type": "homepage", "rules": {"G1": false, "S6": true, "S10": false, "A1": false, "A2": false}}
+  },
+  {
+    "id": "home-2-noh1",
+    "url": "https://shop.example.com/index",
+    "html": "<html><head><title>Home 2</title><meta name=\"description\" content=\"Home description\" /></head><body><div>Welcome</div></body></html>",
+    "expected": {"page_type": "homepage", "rules": {"G1": false, "S6": false, "S10": true, "A1": false, "A2": false}}
+  },
+  {
+    "id": "unknown-1",
+    "url": "https://shop.example.com/landing/sale",
+    "html": "<html><head><title>Sale Landing</title></head><body><h1>Sale</h1></body></html>",
+    "expected": {"page_type": "unknown", "rules": {"G1": false, "S6": true, "S10": false, "A1": false, "A2": false}}
+  },
+  {
+    "id": "pdp-de-1",
+    "url": "https://shop.example.com/de/produkt/skijacke",
+    "html": "<html><head><title>Skijacke Pro</title><meta name=\"description\" content=\"Warme Skijacke für Herren.\" /><meta property=\"og:type\" content=\"product\" /><script type=\"application/ld+json\">{\"@type\":\"Product\",\"name\":\"Skijacke Pro\",\"brand\":{\"name\":\"BergMarke\"},\"offers\":{\"price\":\"299\",\"availability\":\"InStock\"}}</script></head><body><h1>Skijacke Pro</h1><main><p>Größe: L</p><p>Farbe: Schwarz</p><p>Material: Polyamid</p></main></body></html>",
+    "expected": {"page_type": "pdp", "rules": {"G1": true, "S6": true, "S10": true, "A1": false, "A2": false}}
+  },
+  {
+    "id": "pdp-4-noh1",
+    "url": "https://shop.example.com/product/gloves-4",
+    "html": "<html><head><title>Gloves 4</title><meta name=\"description\" content=\"Thermal gloves.\" /><meta property=\"og:type\" content=\"product\" /><script type=\"application/ld+json\">{\"@type\":\"Product\",\"name\":\"Gloves 4\",\"brand\":\"Alpinex\",\"offers\":{\"price\":\"49\",\"availability\":\"InStock\"}}</script></head><body><main>Thermal gloves</main></body></html>",
+    "expected": {"page_type": "pdp", "rules": {"G1": true, "S6": false, "S10": true, "A1": false, "A2": false}}
+  },
+  {
+    "id": "article-3-howto-faq",
+    "url": "https://shop.example.com/blog/ski-maintenance",
+    "html": "<html><head><title>Ski Maintenance</title><meta name=\"description\" content=\"Maintain your skis.\" /><script type=\"application/ld+json\">{\"@type\":\"HowTo\"}</script><script type=\"application/ld+json\">{\"@type\":\"FAQPage\"}</script></head><body><article><h1>Ski Maintenance</h1></article></body></html>",
+    "expected": {"page_type": "article", "rules": {"G1": false, "S6": true, "S10": true, "A1": true, "A2": true}}
+  },
+  {
+    "id": "plp-3-h1-missing",
+    "url": "https://shop.example.com/category/ski-pants",
+    "html": "<html><head><title>Ski Pants</title><meta name=\"description\" content=\"Ski pants collection.\" /><script type=\"application/ld+json\">{\"@type\":\"ItemList\"}</script></head><body><main><p>Item 1</p></main></body></html>",
+    "expected": {"page_type": "plp_category", "rules": {"G1": false, "S6": false, "S10": true, "A1": false, "A2": false}}
+  },
+  {
+    "id": "unknown-2-interstitial",
+    "url": "https://shop.example.com/blocked",
+    "html": "<html><body>Please enable JavaScript and cookies to continue.</body></html>",
+    "expected": {"page_type": "unknown", "rules": {"G1": false, "S6": false, "S10": false, "A1": false, "A2": false}}
+  }
+]

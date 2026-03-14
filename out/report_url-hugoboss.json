@@ -1,0 +1,905 @@
+{
+  "assessments": {
+    "GEO": {
+      "scoring_meta": {
+        "ruleset_version": "2026.03",
+        "generated_at_utc": "2026-03-11T22:30:18.193113+00:00",
+        "rubric_source": "global_fallback"
+      },
+      "summary": {
+        "product_count": 1,
+        "scored_count": 1,
+        "blocked_count": 0,
+        "average_score": 76
+      },
+      "products": [
+        {
+          "product_id": "url::https://www.hugoboss.com/de/alle-marken/herren/sport/ski-kollektion/",
+          "url": "https://www.hugoboss.com/de/alle-marken/herren/sport/ski-kollektion/",
+          "category_scores": {
+            "geo_structure": 90.67,
+            "content_quality": 46.0,
+            "semantic_quality": 77.92,
+            "ux_signals": 99.7,
+            "feed_quality": 0.0
+          },
+          "overall_score": 76,
+          "confidence": 100.0,
+          "blocked": false,
+          "issues": {
+            "high": [
+              {
+                "rule_id": "C2",
+                "message": "Rule C2 failed or partially failed",
+                "priority": "high",
+                "priority_score": 20.0,
+                "evidence": "field=content.description_length value=0"
+              },
+              {
+                "rule_id": "C3",
+                "message": "Rule C3 failed or partially failed",
+                "priority": "high",
+                "priority_score": 18.75,
+                "evidence": "field=content.attribute_completeness value=0.25"
+              },
+              {
+                "rule_id": "C6",
+                "message": "Rule C6 failed or partially failed",
+                "priority": "high",
+                "priority_score": 10.0,
+                "evidence": "field=content.review_presence value=False"
+              }
+            ],
+            "medium": [
+              {
+                "rule_id": "G2",
+                "message": "Rule G2 failed or partially failed",
+                "priority": "medium",
+                "priority_score": 5.0,
+                "evidence": "field=schema.required_field_coverage value=0.8"
+              },
+              {
+                "rule_id": "G4",
+                "message": "Rule G4 failed or partially failed",
+                "priority": "medium",
+                "priority_score": 5.0,
+                "evidence": "field=page.og_coverage value=0.6667"
+              },
+              {
+                "rule_id": "C1",
+                "message": "Rule C1 failed or partially failed",
+                "priority": "medium",
+                "priority_score": 5.25,
+                "evidence": "field=content.title_length value=26"
+              },
+              {
+                "rule_id": "L1",
+                "message": "Rule L1 failed or partially failed",
+                "priority": "medium",
+                "priority_score": 5.0,
+                "evidence": "field=semantic.ambiguity_count value=1"
+              },
+              {
+                "rule_id": "L2",
+                "message": "Rule L2 failed or partially failed",
+                "priority": "medium",
+                "priority_score": 6.0,
+                "evidence": "field=semantic.entity_consistency value=0.7"
+              },
+              {
+                "rule_id": "L4",
+                "message": "Rule L4 failed or partially failed",
+                "priority": "medium",
+                "priority_score": 5.0,
+                "evidence": "field=semantic.factual_grounding value=0.75"
+              }
+            ],
+            "low": [
+              {
+                "rule_id": "U3",
+                "message": "Rule U3 failed or partially failed",
+                "priority": "low",
+                "priority_score": 0.15,
+                "evidence": "field=ux.media_quality value=0.9848"
+              }
+            ]
+          },
+          "rationale": [
+            {
+              "rule_id": "G1",
+              "category": "geo_structure",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "G2",
+              "category": "geo_structure",
+              "raw_value": 0.8,
+              "normalized_score": 0.8,
+              "score_impact": -6.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "G3",
+              "category": "geo_structure",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "G4",
+              "category": "geo_structure",
+              "raw_value": 0.6667,
+              "normalized_score": 0.6667,
+              "score_impact": -3.33,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "G5",
+              "category": "geo_structure",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "G6",
+              "category": "geo_structure",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "G7",
+              "category": "geo_structure",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "C1",
+              "category": "content_quality",
+              "raw_value": 26,
+              "normalized_score": 0.65,
+              "score_impact": -5.25,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "C2",
+              "category": "content_quality",
+              "raw_value": 0,
+              "normalized_score": 0.0,
+              "score_impact": -20.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "C3",
+              "category": "content_quality",
+              "raw_value": 0.25,
+              "normalized_score": 0.25,
+              "score_impact": -18.75,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "C4",
+              "category": "content_quality",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "C5",
+              "category": "content_quality",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "C6",
+              "category": "content_quality",
+              "raw_value": false,
+              "normalized_score": 0.0,
+              "score_impact": -10.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "C7",
+              "category": "content_quality",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "L1",
+              "category": "semantic_quality",
+              "raw_value": 1,
+              "normalized_score": 0.6667,
+              "score_impact": -8.33,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "L2",
+              "category": "semantic_quality",
+              "raw_value": 0.7,
+              "normalized_score": 0.7,
+              "score_impact": -7.5,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "L3",
+              "category": "semantic_quality",
+              "raw_value": 1.0,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "L4",
+              "category": "semantic_quality",
+              "raw_value": 0.75,
+              "normalized_score": 0.75,
+              "score_impact": -6.25,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "U1",
+              "category": "ux_signals",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "U2",
+              "category": "ux_signals",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "U3",
+              "category": "ux_signals",
+              "raw_value": 0.9848,
+              "normalized_score": 0.9848,
+              "score_impact": -0.3,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "U4",
+              "category": "ux_signals",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "F1",
+              "category": "feed_quality",
+              "raw_value": null,
+              "normalized_score": null,
+              "score_impact": 0.0,
+              "status": "not_applicable_missing_input"
+            },
+            {
+              "rule_id": "F2",
+              "category": "feed_quality",
+              "raw_value": null,
+              "normalized_score": null,
+              "score_impact": 0.0,
+              "status": "not_applicable_missing_input"
+            },
+            {
+              "rule_id": "F3",
+              "category": "feed_quality",
+              "raw_value": null,
+              "normalized_score": null,
+              "score_impact": 0.0,
+              "status": "not_applicable_missing_input"
+            },
+            {
+              "rule_id": "F4",
+              "category": "feed_quality",
+              "raw_value": null,
+              "normalized_score": null,
+              "score_impact": 0.0,
+              "status": "not_applicable_missing_input"
+            },
+            {
+              "rule_id": "F5",
+              "category": "feed_quality",
+              "raw_value": null,
+              "normalized_score": null,
+              "score_impact": 0.0,
+              "status": "not_applicable_missing_input"
+            }
+          ],
+          "recommendations": [
+            {
+              "rule_id": "G2",
+              "action": "Add missing required Product/Offer schema fields.",
+              "estimated_lift": "+4 to +6"
+            },
+            {
+              "rule_id": "G4",
+              "action": "Add all Open Graph meta tags (og:title, og:image, og:description, og:type).",
+              "estimated_lift": "+2 to +3"
+            },
+            {
+              "rule_id": "C1",
+              "action": "Adjust the title to be between 40 and 140 characters for optimal AI discoverability.",
+              "estimated_lift": "+3 to +5"
+            },
+            {
+              "rule_id": "C2",
+              "action": "Expand description with concrete specs and use-cases.",
+              "estimated_lift": "+12 to +20"
+            },
+            {
+              "rule_id": "C3",
+              "action": "Complete required and recommended product attributes.",
+              "estimated_lift": "+11 to +19"
+            },
+            {
+              "rule_id": "C6",
+              "action": "Add customer reviews or a rating widget to the product page.",
+              "estimated_lift": "+6 to +10"
+            },
+            {
+              "rule_id": "L1",
+              "action": "Remove or clarify ambiguous terms that could confuse AI entity extraction.",
+              "estimated_lift": "+5 to +8"
+            },
+            {
+              "rule_id": "L2",
+              "action": "Align brand/model/price entities between schema and visible content.",
+              "estimated_lift": "+4 to +8"
+            },
+            {
+              "rule_id": "L4",
+              "action": "Add verifiable specs and factual claims backed by structured data.",
+              "estimated_lift": "+4 to +6"
+            },
+            {
+              "rule_id": "U3",
+              "action": "Use higher-quality or properly sized images and media.",
+              "estimated_lift": "+1 to +1"
+            }
+          ],
+          "ai_optimization_suggestions": [
+            "Increase attribute density for AI retrieval and ranking signals."
+          ],
+          "regression": {
+            "has_previous": false
+          }
+        }
+      ]
+    },
+    "AEO": {
+      "scoring_meta": {
+        "ruleset_version": "2026.03",
+        "generated_at_utc": "2026-03-11T22:30:18.194035+00:00",
+        "rubric_source": "global_fallback"
+      },
+      "summary": {
+        "product_count": 1,
+        "scored_count": 1,
+        "blocked_count": 0,
+        "average_score": 55
+      },
+      "products": [
+        {
+          "product_id": "url::https://www.hugoboss.com/de/alle-marken/herren/sport/ski-kollektion/",
+          "url": "https://www.hugoboss.com/de/alle-marken/herren/sport/ski-kollektion/",
+          "category_scores": {
+            "answer_structure": 1.88,
+            "snippet_readiness": 66.25,
+            "entity_clarity": 70.33,
+            "voice_readiness": 100.0
+          },
+          "overall_score": 55,
+          "confidence": 100.0,
+          "blocked": false,
+          "issues": {
+            "high": [
+              {
+                "rule_id": "A1",
+                "message": "Rule A1 failed or partially failed",
+                "priority": "high",
+                "priority_score": 25.0,
+                "evidence": "field=aeo.faq_schema_present value=False"
+              },
+              {
+                "rule_id": "A2",
+                "message": "Rule A2 failed or partially failed",
+                "priority": "high",
+                "priority_score": 20.0,
+                "evidence": "field=aeo.howto_schema_present value=False"
+              },
+              {
+                "rule_id": "A3",
+                "message": "Rule A3 failed or partially failed",
+                "priority": "high",
+                "priority_score": 20.0,
+                "evidence": "field=aeo.direct_answer_patterns value=0.0"
+              },
+              {
+                "rule_id": "A4",
+                "message": "Rule A4 failed or partially failed",
+                "priority": "high",
+                "priority_score": 8.12,
+                "evidence": "field=aeo.list_structure_ratio value=0.1877"
+              },
+              {
+                "rule_id": "A5",
+                "message": "Rule A5 failed or partially failed",
+                "priority": "high",
+                "priority_score": 10.0,
+                "evidence": "field=aeo.table_presence value=False"
+              },
+              {
+                "rule_id": "A9",
+                "message": "Rule A9 failed or partially failed",
+                "priority": "high",
+                "priority_score": 15.0,
+                "evidence": "field=content.description_length value=0"
+              }
+            ],
+            "medium": [
+              {
+                "rule_id": "A8",
+                "message": "Rule A8 failed or partially failed",
+                "priority": "medium",
+                "priority_score": 5.25,
+                "evidence": "field=content.title_length value=26"
+              },
+              {
+                "rule_id": "A10",
+                "message": "Rule A10 failed or partially failed",
+                "priority": "medium",
+                "priority_score": 6.0,
+                "evidence": "field=semantic.entity_consistency value=0.7"
+              },
+              {
+                "rule_id": "A11",
+                "message": "Rule A11 failed or partially failed",
+                "priority": "medium",
+                "priority_score": 5.0,
+                "evidence": "field=semantic.ambiguity_count value=1"
+              },
+              {
+                "rule_id": "A12",
+                "message": "Rule A12 failed or partially failed",
+                "priority": "medium",
+                "priority_score": 5.0,
+                "evidence": "field=semantic.factual_grounding value=0.75"
+              }
+            ],
+            "low": []
+          },
+          "rationale": [
+            {
+              "rule_id": "A1",
+              "category": "answer_structure",
+              "raw_value": false,
+              "normalized_score": 0.0,
+              "score_impact": -30.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A2",
+              "category": "answer_structure",
+              "raw_value": false,
+              "normalized_score": 0.0,
+              "score_impact": -25.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A3",
+              "category": "answer_structure",
+              "raw_value": 0.0,
+              "normalized_score": 0.0,
+              "score_impact": -25.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A4",
+              "category": "answer_structure",
+              "raw_value": 0.1877,
+              "normalized_score": 0.1877,
+              "score_impact": -8.12,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A5",
+              "category": "answer_structure",
+              "raw_value": false,
+              "normalized_score": 0.0,
+              "score_impact": -10.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A6",
+              "category": "snippet_readiness",
+              "raw_value": 1.0,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A7",
+              "category": "snippet_readiness",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A8",
+              "category": "snippet_readiness",
+              "raw_value": 26,
+              "normalized_score": 0.65,
+              "score_impact": -8.75,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A9",
+              "category": "snippet_readiness",
+              "raw_value": 0,
+              "normalized_score": 0.0,
+              "score_impact": -25.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A10",
+              "category": "entity_clarity",
+              "raw_value": 0.7,
+              "normalized_score": 0.7,
+              "score_impact": -10.5,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A11",
+              "category": "entity_clarity",
+              "raw_value": 1,
+              "normalized_score": 0.6667,
+              "score_impact": -11.67,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A12",
+              "category": "entity_clarity",
+              "raw_value": 0.75,
+              "normalized_score": 0.75,
+              "score_impact": -7.5,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A13",
+              "category": "voice_readiness",
+              "raw_value": 1.0,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A14",
+              "category": "voice_readiness",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "A15",
+              "category": "voice_readiness",
+              "raw_value": 1.0,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            }
+          ],
+          "recommendations": [
+            {
+              "rule_id": "A1",
+              "action": "Add FAQPage schema (JSON-LD) for Q&A content.",
+              "estimated_lift": "+18 to +30"
+            },
+            {
+              "rule_id": "A2",
+              "action": "Add HowTo schema for step-by-step or instructional content.",
+              "estimated_lift": "+15 to +25"
+            },
+            {
+              "rule_id": "A3",
+              "action": "Use direct-answer phrasing (e.g. \"The X is Y\", \"You can...\") in key paragraphs.",
+              "estimated_lift": "+15 to +25"
+            },
+            {
+              "rule_id": "A4",
+              "action": "Add bullet or numbered lists for scannable answers.",
+              "estimated_lift": "+5 to +8"
+            },
+            {
+              "rule_id": "A5",
+              "action": "Add tables for comparative or factual data.",
+              "estimated_lift": "+6 to +10"
+            },
+            {
+              "rule_id": "A8",
+              "action": "Keep title between 40 and 60 characters for answer snippets.",
+              "estimated_lift": "+5 to +9"
+            },
+            {
+              "rule_id": "A9",
+              "action": "Provide a meta description of at least 150 characters.",
+              "estimated_lift": "+15 to +25"
+            },
+            {
+              "rule_id": "A10",
+              "action": "Align entity names (brand, product) across schema and visible content.",
+              "estimated_lift": "+6 to +11"
+            },
+            {
+              "rule_id": "A11",
+              "action": "Reduce ambiguous or vague terms for clearer entity extraction.",
+              "estimated_lift": "+7 to +12"
+            },
+            {
+              "rule_id": "A12",
+              "action": "Back factual claims with structured data or clear specs.",
+              "estimated_lift": "+4 to +8"
+            }
+          ],
+          "ai_optimization_suggestions": [
+            "Increase attribute density for AI retrieval and ranking signals."
+          ],
+          "regression": {
+            "has_previous": false
+          }
+        }
+      ]
+    },
+    "SEO": {
+      "scoring_meta": {
+        "ruleset_version": "2026.03",
+        "generated_at_utc": "2026-03-11T22:30:18.194945+00:00",
+        "rubric_source": "global_fallback"
+      },
+      "summary": {
+        "product_count": 1,
+        "scored_count": 1,
+        "blocked_count": 0,
+        "average_score": 82
+      },
+      "products": [
+        {
+          "product_id": "url::https://www.hugoboss.com/de/alle-marken/herren/sport/ski-kollektion/",
+          "url": "https://www.hugoboss.com/de/alle-marken/herren/sport/ski-kollektion/",
+          "category_scores": {
+            "technical_seo": 100.0,
+            "on_page_seo": 55.4,
+            "content_seo": 77.5,
+            "link_and_media": 99.54
+          },
+          "overall_score": 82,
+          "confidence": 100.0,
+          "blocked": false,
+          "issues": {
+            "high": [
+              {
+                "rule_id": "S8",
+                "message": "Rule S8 failed or partially failed",
+                "priority": "high",
+                "priority_score": 9.6,
+                "evidence": "field=content.title_length value=26"
+              },
+              {
+                "rule_id": "S9",
+                "message": "Rule S9 failed or partially failed",
+                "priority": "high",
+                "priority_score": 20.0,
+                "evidence": "field=seo.meta_desc_length value=0"
+              },
+              {
+                "rule_id": "S10",
+                "message": "Rule S10 failed or partially failed",
+                "priority": "high",
+                "priority_score": 15.0,
+                "evidence": "field=seo.meta_desc_present value=False"
+              },
+              {
+                "rule_id": "S12",
+                "message": "Rule S12 failed or partially failed",
+                "priority": "high",
+                "priority_score": 15.0,
+                "evidence": "field=content.attribute_completeness value=0.25"
+              }
+            ],
+            "medium": [],
+            "low": [
+              {
+                "rule_id": "S16",
+                "message": "Rule S16 failed or partially failed",
+                "priority": "low",
+                "priority_score": 0.3,
+                "evidence": "field=seo.image_alt_ratio value=0.9848"
+              }
+            ]
+          },
+          "rationale": [
+            {
+              "rule_id": "S1",
+              "category": "technical_seo",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S2",
+              "category": "technical_seo",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S3",
+              "category": "technical_seo",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S4",
+              "category": "technical_seo",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S5",
+              "category": "technical_seo",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S6",
+              "category": "on_page_seo",
+              "raw_value": true,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S7",
+              "category": "on_page_seo",
+              "raw_value": 1,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S8",
+              "category": "on_page_seo",
+              "raw_value": 26,
+              "normalized_score": 0.52,
+              "score_impact": -9.6,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S9",
+              "category": "on_page_seo",
+              "raw_value": 0,
+              "normalized_score": 0.0,
+              "score_impact": -20.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S10",
+              "category": "on_page_seo",
+              "raw_value": false,
+              "normalized_score": 0.0,
+              "score_impact": -15.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S11",
+              "category": "content_seo",
+              "raw_value": 813,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S12",
+              "category": "content_seo",
+              "raw_value": 0.25,
+              "normalized_score": 0.25,
+              "score_impact": -22.5,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S13",
+              "category": "content_seo",
+              "raw_value": 1.0,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S14",
+              "category": "link_and_media",
+              "raw_value": 104,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S15",
+              "category": "link_and_media",
+              "raw_value": 10,
+              "normalized_score": 1.0,
+              "score_impact": -0.0,
+              "status": "evaluated"
+            },
+            {
+              "rule_id": "S16",
+              "category": "link_and_media",
+              "raw_value": 0.9848,
+              "normalized_score": 0.9848,
+              "score_impact": -0.46,
+              "status": "evaluated"
+            }
+          ],
+          "recommendations": [
+            {
+              "rule_id": "S8",
+              "action": "Keep title tag between 50 and 60 characters for search snippets.",
+              "estimated_lift": "+6 to +10"
+            },
+            {
+              "rule_id": "S9",
+              "action": "Keep meta description between 120 and 160 characters.",
+              "estimated_lift": "+12 to +20"
+            },
+            {
+              "rule_id": "S10",
+              "action": "Add a unique meta description for the page.",
+              "estimated_lift": "+9 to +15"
+            },
+            {
+              "rule_id": "S12",
+              "action": "Complete product attributes (material, size, brand, etc.) for relevance.",
+              "estimated_lift": "+14 to +22"
+            },
+            {
+              "rule_id": "S16",
+              "action": "Add descriptive alt text to all images.",
+              "estimated_lift": "+1 to +1"
+            }
+          ],
+          "ai_optimization_suggestions": [
+            "Increase attribute density for AI retrieval and ranking signals."
+          ],
+          "regression": {
+            "has_previous": false
+          }
+        }
+      ]
+    }
+  }
+}

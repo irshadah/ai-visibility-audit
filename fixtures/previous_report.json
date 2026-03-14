@@ -1,0 +1,16 @@
+{
+  "products": [
+    {
+      "product_id": "SKU-123",
+      "url": "https://shop.example.com/p/sku-123",
+      "overall_score": 69,
+      "category_scores": {
+        "geo_structure": 68,
+        "content_quality": 72,
+        "semantic_quality": 60,
+        "ux_signals": 70,
+        "feed_quality": 82
+      }
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "items": [
+    {
+      "id": "F-100",
+      "title": "Acme Trail Running Shoe Mens Blue Size 10",
+      "description": "Breathable trail running shoe with reinforced sole, grip lugs, and water-resistant upper.",
+      "link": "https://shop.example.com/p/f-100",
+      "image_link": "https://shop.example.com/images/f-100.jpg",
+      "availability": "in stock",
+      "price": "89.99 USD",
+      "condition": "new",
+      "brand": "Acme",
+      "google_product_category": "Apparel & Accessories > Shoes",
+      "product_type": "Shoes",
+      "color": "Blue",
+      "size": "10",
+      "gender": "male",
+      "age_group": "adult",
+      "item_group_id": "F-100-GROUP"
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "version": "2026.03",
+  "category_weights": {
+    "geo_structure": 0.30,
+    "content_quality": 0.25,
+    "semantic_quality": 0.20,
+    "ux_signals": 0.10,
+    "feed_quality": 0.15
+  },
+  "confidence_gate": 70,
+  "rules": {
+    "geo_structure": [
+      {"id": "G1", "weight": 20, "type": "binary", "field": "schema.product_present", "impact": 5, "applies_to_page_types": ["pdp", "plp_category"], "missing_behavior": "zero"},
+      {"id": "G2", "weight": 30, "type": "ratio", "field": "schema.required_field_coverage", "impact": 5, "applies_to_page_types": ["pdp", "plp_category"]},
+      {"id": "G3", "weight": 10, "type": "binary", "field": "page.indexable", "impact": 4},
+      {"id": "G4", "weight": 10, "type": "ratio", "field": "page.og_coverage", "impact": 3},
+      {"id": "G5", "weight": 10, "type": "binary", "field": "page.url_hygiene", "impact": 2},
+      {"id": "G6", "weight": 10, "type": "binary", "field": "page.price_availability_machine_readable", "impact": 4},
+      {"id": "G7", "weight": 10, "type": "binary", "field": "page.variant_clarity", "impact": 3, "applies_to_page_types": ["pdp", "plp_category"]}
+    ],
+    "content_quality": [
+      {"id": "C1", "weight": 15, "type": "range", "field": "content.title_length", "min": 40, "max": 140, "impact": 3},
+      {"id": "C2", "weight": 20, "type": "threshold", "field": "content.description_length", "min": 300, "impact": 4},
+      {"id": "C3", "weight": 25, "type": "ratio", "field": "content.attribute_completeness", "impact": 5},
+      {"id": "C4", "weight": 10, "type": "binary", "field": "content.pricing_clarity", "impact": 4},
+      {"id": "C5", "weight": 10, "type": "binary", "field": "content.policy_clarity", "impact": 3},
+      {"id": "C6", "weight": 10, "type": "binary", "field": "content.review_presence", "impact": 2, "applies_to_page_types": ["pdp"], "missing_behavior": "zero"},
+      {"id": "C7", "weight": 10, "type": "binary", "field": "content.support_trust_info", "impact": 2}
+    ],
+    "semantic_quality": [
+      {"id": "L1", "weight": 25, "type": "inverse_threshold", "field": "semantic.ambiguity_count", "max": 3, "impact": 3},
+      {"id": "L2", "weight": 25, "type": "ratio", "field": "semantic.entity_consistency", "impact": 4},
+      {"id": "L3", "weight": 25, "type": "ratio", "field": "semantic.query_answerability", "impact": 4},
+      {"id": "L4", "weight": 25, "type": "ratio", "field": "semantic.factual_grounding", "impact": 4}
+    ],
+    "ux_signals": [
+      {"id": "U1", "weight": 30, "type": "binary", "field": "ux.render_accessibility", "impact": 3},
+      {"id": "U2", "weight": 30, "type": "binary", "field": "ux.core_discoverability", "impact": 3},
+      {"id": "U3", "weight": 20, "type": "ratio", "field": "ux.media_quality", "impact": 2},
+      {"id": "U4", "weight": 20, "type": "binary", "field": "ux.mobile_readability", "impact": 2}
+    ],
+    "feed_quality": [
+      {"id": "F1", "weight": 30, "type": "ratio", "field": "feed.required_coverage", "impact": 5},
+      {"id": "F2", "weight": 20, "type": "ratio", "field": "feed.attribute_completeness", "impact": 4},
+      {"id": "F3", "weight": 20, "type": "ratio", "field": "feed.validity", "impact": 4},
+      {"id": "F4", "weight": 20, "type": "ratio", "field": "feed.page_consistency", "impact": 4},
+      {"id": "F5", "weight": 10, "type": "ratio", "field": "feed.freshness", "impact": 3}
+    ]
+  },
+  "recommendation_map": {
+    "G1": "Add Product or Offer schema (JSON-LD) to the page.",
+    "G2": "Add missing required Product/Offer schema fields.",
+    "G3": "Ensure the page is indexable (no noindex, allow crawlers).",
+    "G4": "Add all Open Graph meta tags (og:title, og:image, og:description, og:type).",
+    "G5": "Fix URL hygiene: use clean, canonical URLs without session/tracking params.",
+    "G6": "Expose price and availability in machine-readable form (schema or meta).",
+    "G7": "Clarify variant selection (size, color) in schema or structured data.",
+    "C1": "Adjust the title to be between 40 and 140 characters for optimal AI discoverability.",
+    "C2": "Expand description with concrete specs and use-cases.",
+    "C3": "Complete required and recommended product attributes.",
+    "C4": "Show clear pricing (price, currency, availability) on the page.",
+    "C5": "Add shipping, returns, or policy information.",
+    "C6": "Add customer reviews or a rating widget to the product page.",
+    "C7": "Add support or trust signals (contact, guarantees, certifications).",
+    "L1": "Remove or clarify ambiguous terms that could confuse AI entity extraction.",
+    "L2": "Align brand/model/price entities between schema and visible content.",
+    "L3": "Add explicit Q&A or specs for compatibility, fit, and use-case queries.",
+    "L4": "Add verifiable specs and factual claims backed by structured data.",
+    "U1": "Ensure images have alt text and content is accessible to assistive tech.",
+    "U2": "Improve core discoverability (headings, breadcrumbs, clear structure).",
+    "U3": "Use higher-quality or properly sized images and media.",
+    "U4": "Ensure layout and text are readable on mobile (viewport, font size).",
+    "F1": "Populate all required Merchant feed fields.",
+    "F2": "Complete feed attribute coverage for required and recommended fields.",
+    "F3": "Fix feed validity (format, encoding, required fields).",
+    "F4": "Align feed data with page content (titles, prices, availability).",
+    "F5": "Keep feed updated (fresh availability and pricing)."
+  }
+}

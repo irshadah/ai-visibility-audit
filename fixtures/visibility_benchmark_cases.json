@@ -1,0 +1,32 @@
+[
+  {
+    "alias": "hugo boss",
+    "domain": "hugoboss.com",
+    "response_text": "HUGO BOSS is a premium brand. Official site: https://www.hugoboss.com/de/",
+    "expected": {"mentioned": true, "cited": true}
+  },
+  {
+    "alias": "hugo boss",
+    "domain": "hugoboss.com",
+    "response_text": "Top ski brands include Moncler and Bogner.",
+    "expected": {"mentioned": false, "cited": false}
+  },
+  {
+    "alias": "warby parker",
+    "domain": "warbyparker.com",
+    "response_text": "Warby Parker is often recommended for budget-friendly eyewear.",
+    "expected": {"mentioned": true, "cited": false}
+  },
+  {
+    "alias": "warby parker",
+    "domain": "warbyparker.com",
+    "response_text": "You can find details on https://www.warbyparker.com and compare styles.",
+    "expected": {"mentioned": true, "cited": true}
+  },
+  {
+    "alias": "acme",
+    "domain": "acme.com",
+    "response_text": "Avoid this company, poor support quality.",
+    "expected": {"mentioned": false, "cited": false}
+  }
+]

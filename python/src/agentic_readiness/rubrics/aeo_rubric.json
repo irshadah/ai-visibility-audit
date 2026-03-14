@@ -1,0 +1,58 @@
+{
+  "version": "2026.03",
+  "category_weights": {
+    "answer_structure": 0.30,
+    "snippet_readiness": 0.25,
+    "entity_clarity": 0.25,
+    "voice_readiness": 0.20
+  },
+  "confidence_gate": 70,
+  "confidence_paths": [
+    "content.title_length",
+    "content.description_length",
+    "aeo.direct_answer_patterns",
+    "semantic.query_answerability"
+  ],
+  "rules": {
+    "answer_structure": [
+      {"id": "A1", "weight": 30, "type": "binary", "field": "aeo.faq_schema_present", "impact": 5, "missing_behavior": "zero", "applies_to_page_types": ["pdp", "plp_category", "article"]},
+      {"id": "A2", "weight": 25, "type": "binary", "field": "aeo.howto_schema_present", "impact": 4, "missing_behavior": "zero", "applies_to_page_types": ["pdp", "plp_category", "article"]},
+      {"id": "A3", "weight": 25, "type": "ratio", "field": "aeo.direct_answer_patterns", "impact": 4},
+      {"id": "A4", "weight": 10, "type": "ratio", "field": "aeo.list_structure_ratio", "impact": 2},
+      {"id": "A5", "weight": 10, "type": "binary", "field": "aeo.table_presence", "impact": 2, "applies_to_page_types": ["pdp", "article", "plp_category"]}
+    ],
+    "snippet_readiness": [
+      {"id": "A6", "weight": 25, "type": "ratio", "field": "aeo.concise_paragraph_ratio", "impact": 4},
+      {"id": "A7", "weight": 25, "type": "binary", "field": "aeo.heading_hierarchy_valid", "impact": 4},
+      {"id": "A8", "weight": 25, "type": "range", "field": "content.title_length", "min": 40, "max": 60, "impact": 3},
+      {"id": "A9", "weight": 25, "type": "threshold", "field": "content.description_length", "min": 150, "impact": 3}
+    ],
+    "entity_clarity": [
+      {"id": "A10", "weight": 35, "type": "ratio", "field": "semantic.entity_consistency", "impact": 4},
+      {"id": "A11", "weight": 35, "type": "inverse_threshold", "field": "semantic.ambiguity_count", "max": 3, "impact": 3},
+      {"id": "A12", "weight": 30, "type": "ratio", "field": "semantic.factual_grounding", "impact": 4}
+    ],
+    "voice_readiness": [
+      {"id": "A13", "weight": 35, "type": "ratio", "field": "aeo.question_coverage", "impact": 4},
+      {"id": "A14", "weight": 30, "type": "binary", "field": "ux.mobile_readability", "impact": 3},
+      {"id": "A15", "weight": 35, "type": "ratio", "field": "semantic.query_answerability", "impact": 4}
+    ]
+  },
+  "recommendation_map": {
+    "A1": "Add FAQPage schema (JSON-LD) for Q&A content.",
+    "A2": "Add HowTo schema for step-by-step or instructional content.",
+    "A3": "Use direct-answer phrasing (e.g. \"The X is Y\", \"You can...\") in key paragraphs.",
+    "A4": "Add bullet or numbered lists for scannable answers.",
+    "A5": "Add tables for comparative or factual data.",
+    "A6": "Break content into concise paragraphs (under 50 words) for snippet extraction.",
+    "A7": "Use exactly one H1 and logical heading hierarchy (H2, H3).",
+    "A8": "Keep title between 40 and 60 characters for answer snippets.",
+    "A9": "Provide a meta description of at least 150 characters.",
+    "A10": "Align entity names (brand, product) across schema and visible content.",
+    "A11": "Reduce ambiguous or vague terms for clearer entity extraction.",
+    "A12": "Back factual claims with structured data or clear specs.",
+    "A13": "Include question-and-answer style content for voice and featured snippets.",
+    "A14": "Ensure mobile-friendly layout and viewport for voice assistants.",
+    "A15": "Add explicit Q&A or specs that answer common queries."
+  }
+}

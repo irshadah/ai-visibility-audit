@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
+  <channel>
+    <title>Example Feed</title>
+    <item>
+      <g:id>F-300</g:id>
+      <g:title>Acme Ceramic Mug 350ml</g:title>
+      <g:description>Dishwasher-safe ceramic mug with ergonomic handle.</g:description>
+      <g:link>https://shop.example.com/p/f-300</g:link>
+      <g:image_link>https://shop.example.com/images/f-300.jpg</g:image_link>
+      <g:availability>in stock</g:availability>
+      <g:price>14.50 USD</g:price>
+      <g:condition>new</g:condition>
+      <g:brand>Acme</g:brand>
+      <g:google_product_category>Home &amp; Garden &gt; Kitchen &amp; Dining</g:google_product_category>
+      <g:product_type>Mugs</g:product_type>
+      <g:color>White</g:color>
+      <g:item_group_id>F-300-GROUP</g:item_group_id>
+    </item>
+  </channel>
+</rss>
