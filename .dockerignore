@@ -1,0 +1,17 @@
+.git
+.env
+.env.*
+!.env.example
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+**/.venv
+**/venv
+**/node_modules
+web/frontend/dist
+out
+fixtures
+*.md
+.cursor
+.idea
+*.log

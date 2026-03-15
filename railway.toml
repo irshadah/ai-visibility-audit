@@ -1,0 +1,5 @@
+# Force Railway to use the Dockerfile instead of Railpack/Nixpacks.
+# See https://docs.railway.app/guides/dockerfiles
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"

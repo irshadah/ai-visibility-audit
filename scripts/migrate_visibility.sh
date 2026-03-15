@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
+# Run from repo root: ./scripts/migrate_visibility.sh
+# Applies in order: visibility_schema.sql -> visibility_schema_v2.sql -> visibility_schema_query_runs.sql
 
 # Load .env if present (so DATABASE_URL etc. are available)
 if [ -f ".env" ]; then
@@ -31,8 +33,13 @@ else
   echo "Database '$DB_NAME' already exists or cannot be created (continuing)."
 fi
 
-echo "Applying visibility schema..."
+# Run migrations in order (idempotent: safe to re-run)
+echo "Applying visibility_schema.sql..."
 psql "$DB_URL" -f scripts/sql/visibility_schema.sql
+echo "Applying visibility_schema_v2.sql..."
+psql "$DB_URL" -f scripts/sql/visibility_schema_v2.sql
+echo "Applying visibility_schema_query_runs.sql..."
+psql "$DB_URL" -f scripts/sql/visibility_schema_query_runs.sql
 
 echo "Migration completed."
 
