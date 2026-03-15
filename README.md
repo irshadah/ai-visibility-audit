@@ -98,4 +98,4 @@ See [docs/deployment.md](docs/deployment.md) for step-by-step instructions. Summ
 
 1. Connect the repo to [Railway](https://railway.app/), add a Postgres plugin, and set `DATABASE_URL` (and optional API keys for the AI Visibility tab).
 2. Run migrations once (Release Command or one-off): `./scripts/migrate_visibility.sh` or `python scripts/run_migrations.py`.
-3. Deploy using the repo Dockerfile (builds frontend, serves with gunicorn). Playwright is not installed in the image, so bot-protected URLs may show a fallback error in Readiness Audit.
+3. Deploy using the repo Dockerfile (builds frontend, serves with gunicorn). Playwright + Chromium are installed in the image, so browser fallback works for bot-protected URLs.

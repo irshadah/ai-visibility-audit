@@ -1,4 +1,4 @@
-# Multi-stage: build frontend, then serve with Python (no Playwright in image)
+# Multi-stage: build frontend, then serve with Python (Playwright enabled)
 ARG NODE_VERSION=20-alpine
 ARG PYTHON_VERSION=3.12-slim
 
@@ -14,9 +14,11 @@ RUN npm run build
 FROM python:${PYTHON_VERSION}
 WORKDIR /app
 
-# Python deps (no Playwright to keep image small)
+# Python deps
 COPY web/backend/requirements-railway.txt ./web/backend/
 RUN pip install --no-cache-dir -r web/backend/requirements-railway.txt
+ENV PLAYWRIGHT_DOWNLOAD_CONNECTION_TIMEOUT=120000
+RUN python -m playwright install --with-deps chromium
 
 # App and built frontend
 COPY python/ ./python/
