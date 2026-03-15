@@ -102,8 +102,12 @@ function detectSources(responseText, runUrl) {
 
 export default function VisibilityDashboard({ result, onSelectRunId }) {
   const [history, setHistory] = useState([]);
+  const [queryHistory, setQueryHistory] = useState([]);
   const [expandedTopicKey, setExpandedTopicKey] = useState(null);
+  const [evidenceModal, setEvidenceModal] = useState(null);
+  const isQueryDriven = Boolean(result?.query_text && (result?.by_provider || result?.run_type === "query_driven"));
   const byLlmRaw = result?.by_llm || result?.provider_metrics?.reduce((acc, m) => ({ ...acc, [m.provider]: m }), {}) || {};
+  const byProvider = result?.by_provider || {};
   const providerStatus = result?.provider_status || {};
   const byLlm = useMemo(() => {
     const available = Object.entries(providerStatus).filter(([, s]) => s?.status === "available").map(([p]) => p);
@@ -155,14 +159,95 @@ export default function VisibilityDashboard({ result, onSelectRunId }) {
     loadHistory();
   }, [result?.url]);
 
+  useEffect(() => {
+    async function loadQueryHistory() {
+      if (!result?.url || !isQueryDriven) return;
+      try {
+        const res = await fetch(`/api/visibility/query-runs?url=${encodeURIComponent(result.url)}&limit=5`);
+        const data = await res.json();
+        if (res.ok) setQueryHistory(data?.runs || []);
+      } catch {
+        setQueryHistory([]);
+      }
+    }
+    loadQueryHistory();
+  }, [result?.url, isQueryDriven]);
+
   const isPartial = result?.status === "partial";
 
   return (
     <section className="card">
       <div className="results-header">
         <h2 style={{ margin: 0 }}>AI Visibility Report</h2>
-        <div className="muted">{result?.domain}</div>
+        <div className="muted">
+          {result?.domain}
+          {result?.country_code && ` · ${result.country_code}`}
+        </div>
       </div>
+      {isQueryDriven && (
+        <div className="dashboard-section dashboard-section-query">
+          <h3 style={{ marginBottom: 8 }}>Query-driven Analysis</h3>
+          <div style={{ marginBottom: 12 }}>
+            <strong>Query:</strong> {result?.query_text}
+            <span className="muted" style={{ marginLeft: 8 }}>({result?.category})</span>
+            {result?.country_code && (
+              <span className="muted" style={{ marginLeft: 8 }}>· Country: {result.country_code}</span>
+            )}
+          </div>
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Provider</th>
+                  <th>Mentioned</th>
+                  <th>In Top 5</th>
+                  <th>In Top 10</th>
+                  <th>Appearance Rate</th>
+                  <th>Avg Position</th>
+                  <th>Evidence</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(byProvider).map(([provider, row]) => (
+                  <tr key={provider}>
+                    <td>{provider}</td>
+                    <td>{row?.mentioned ? "Yes" : "No"}</td>
+                    <td>{row?.in_top_5 ? "Yes" : "No"}</td>
+                    <td>{row?.in_top_10 ? "Yes" : "No"}</td>
+                    <td>{row?.appearance_rate_pct != null ? `${row.appearance_rate_pct}%` : "—"}</td>
+                    <td>{row?.avg_position != null ? row.avg_position : "—"}</td>
+                    <td className="evidence-cell">
+                      {row?.evidence_text ? (
+                        <div className="evidence-content">
+                          <span className="evidence-preview">
+                            {row.evidence_text.length > 150
+                              ? `${row.evidence_text.slice(0, 150)}…`
+                              : row.evidence_text}
+                          </span>
+                          <button
+                            type="button"
+                            className="secondary evidence-toggle"
+                            onClick={() => setEvidenceModal({ provider, text: row.evidence_text })}
+                          >
+                            Show full
+                          </button>
+                        </div>
+                      ) : (
+                        "—"
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="muted" style={{ marginTop: 8 }}>
+            Brand: <strong>{result?.brand || result?.brand_name || "-"}</strong>
+          </div>
+        </div>
+      )}
+      {!isQueryDriven && (
+        <>
       {isPartial && (
         <div className="warn" style={{ padding: "10px 14px", marginBottom: 12, borderRadius: 6, background: "var(--bg-warn-subtle, #fffbeb)" }}>
           This run had some failed probes; scores may be incomplete.
@@ -407,6 +492,8 @@ export default function VisibilityDashboard({ result, onSelectRunId }) {
           </div>
         </div>
       )}
+        </>
+      )}
 
       <div style={{ marginTop: 16 }}>
         <h3 style={{ marginBottom: 10 }}>Provider Status</h3>
@@ -429,45 +516,113 @@ export default function VisibilityDashboard({ result, onSelectRunId }) {
         </div>
       </div>
 
-      {history.length > 0 ? (
+      {(history.length > 0 || queryHistory.length > 0) ? (
         <div style={{ marginTop: 16 }}>
           <h3 style={{ marginBottom: 10 }}>Recent Runs</h3>
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Started</th>
-                  <th>Score</th>
-                  <th>Label</th>
-                  <th>Status</th>
-                  <th>Prompt Set</th>
-                  <th>Scoring Version</th>
-                  {onSelectRunId ? <th></th> : null}
-                </tr>
-              </thead>
-              <tbody>
-                {history.map((run) => (
-                  <tr key={run.id || run.job_id}>
-                    <td>{run.started_at ? new Date(run.started_at).toLocaleString() : "-"}</td>
-                    <td>{run.overall_score ?? "-"}</td>
-                    <td>{run.overall_label ?? "-"}</td>
-                    <td>{run.status ?? "-"}</td>
-                    <td>{run.prompt_set_version ?? "-"}</td>
-                    <td>{run.scoring_version ?? "-"}</td>
-                    {onSelectRunId && run.id ? (
-                      <td>
-                        <button type="button" className="secondary" onClick={() => onSelectRunId(run.id)}>
-                          View
-                        </button>
-                      </td>
-                    ) : null}
+          {history.length > 0 && (
+            <div className="table-wrap" style={{ marginBottom: 12 }}>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Started</th>
+                    <th>Score</th>
+                    <th>Label</th>
+                    <th>Status</th>
+                    <th>Prompt Set</th>
+                    <th>Scoring Version</th>
+                    {onSelectRunId ? <th></th> : null}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {history.map((run) => (
+                    <tr key={`t-${run.id || run.job_id}`}>
+                      <td>{run.started_at ? new Date(run.started_at).toLocaleString() : "-"}</td>
+                      <td>{run.overall_score ?? "-"}</td>
+                      <td>{run.overall_label ?? "-"}</td>
+                      <td>{run.status ?? "-"}</td>
+                      <td>{run.prompt_set_version ?? "-"}</td>
+                      <td>{run.scoring_version ?? "-"}</td>
+                      {onSelectRunId && run.id ? (
+                        <td>
+                          <button type="button" className="secondary" onClick={() => onSelectRunId(run.id, false)}>
+                            View
+                          </button>
+                        </td>
+                      ) : null}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+          {queryHistory.length > 0 && (
+            <div className="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Started</th>
+                    <th>Query</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    {onSelectRunId ? <th></th> : null}
+                  </tr>
+                </thead>
+                <tbody>
+                  {queryHistory.map((run) => (
+                    <tr key={`q-${run.id || run.job_id}`}>
+                      <td>{run.started_at ? new Date(run.started_at).toLocaleString() : "-"}</td>
+                      <td>{run.query_text ?? "-"}</td>
+                      <td>{run.category ?? "-"}</td>
+                      <td>{run.status ?? "-"}</td>
+                      {onSelectRunId && run.id ? (
+                        <td>
+                          <button type="button" className="secondary" onClick={() => onSelectRunId(run.id, true)}>
+                            View
+                          </button>
+                        </td>
+                      ) : null}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       ) : null}
+
+      {evidenceModal && (
+        <div
+          className="evidence-modal-overlay"
+          onClick={() => setEvidenceModal(null)}
+          onKeyDown={(e) => e.key === "Escape" && setEvidenceModal(null)}
+          role="button"
+          tabIndex={0}
+          aria-label="Close evidence"
+        >
+          <div
+            className="evidence-modal"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Full evidence from ${evidenceModal.provider}`}
+          >
+            <div className="evidence-modal-header">
+              <strong>Evidence ({evidenceModal.provider})</strong>
+              <button
+                type="button"
+                className="secondary"
+                onClick={() => setEvidenceModal(null)}
+                aria-label="Close"
+              >
+                Close
+              </button>
+            </div>
+            <div className="evidence-modal-body">
+              {evidenceModal.text}
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

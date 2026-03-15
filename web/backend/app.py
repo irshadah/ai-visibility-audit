@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import logging
 import os
 import sys
 import threading
@@ -19,7 +20,14 @@ if str(PY_SRC) not in sys.path:
 
 from agentic_readiness.engine import ScoringEngine
 from agentic_readiness.formatter import CATEGORY_LABELS, FIX_HINTS, MODE_TITLES, RULE_LABELS
-from agentic_readiness.ai_visibility import PROMPT_SET_VERSION, SUPPORTED_PROVIDERS, VisibilityConfig, run_ai_visibility_scan
+from agentic_readiness.ai_visibility import (
+    PROMPT_SET_VERSION,
+    SUPPORTED_PROVIDERS,
+    VisibilityConfig,
+    run_ai_visibility_scan,
+    run_query_driven_scan,
+    QUERY_PROBE_N_RUNS,
+)
 from agentic_readiness.url_input import load_single_url_product, validate_url
 from agentic_readiness.visibility_store import (
     VisibilityStore,
@@ -181,6 +189,78 @@ def _provider_availability_from_env() -> dict[str, dict]:
     return out
 
 
+def _run_visibility_query_job(
+    job_id: str,
+    url: str,
+    query_text: str,
+    category: str,
+    brand_name: str | None,
+    company_name: str | None,
+    aliases: list[str] | None,
+    llms: list[str] | None,
+    use_cache: bool = False,
+    country_code: str | None = None,
+) -> None:
+    """Phase 4: Query-driven scan. No competitors."""
+    started_at = datetime.now(timezone.utc)
+    try:
+        _set_visibility_job(job_id, state="running", stage="Preparing query probe...", progress=10)
+
+        def progress_hook(stage: str, progress: int) -> None:
+            _set_visibility_job(job_id, state="running", stage=stage, progress=progress)
+
+        result = run_query_driven_scan(
+            url,
+            query_text,
+            category,
+            brand_name=brand_name,
+            company_name=company_name,
+            aliases=aliases,
+            selected_providers=llms,
+            progress_hook=progress_hook,
+            use_cache=use_cache,
+            country_code=country_code,
+        )
+        _set_visibility_job(job_id, state="running", stage="Persisting...", progress=95)
+        by_provider = result.get("by_provider") or {}
+        rows = []
+        for provider, agg in by_provider.items():
+            rows.append({
+                "provider": provider,
+                "run_count": agg.get("run_count", QUERY_PROBE_N_RUNS),
+                "mentioned": agg.get("mentioned", False),
+                "in_top_5": agg.get("in_top_5", False),
+                "in_top_10": agg.get("in_top_10", False),
+                "appearance_rate_pct": agg.get("appearance_rate_pct", 0),
+                "avg_position": agg.get("avg_position"),
+                "evidence_text": agg.get("evidence_text"),
+                "cost_estimate_usd": QUERY_PROBE_N_RUNS * 0.002,
+                "latency_ms": agg.get("latency_ms", 0),
+            })
+        query_run_id = None
+        if rows:
+            query_run_id = _visibility_store.insert_query_run_rows(
+                job_id=job_id,
+                url=url,
+                domain=result.get("domain", ""),
+                brand_name=result.get("brand", ""),
+                company_name=result.get("company_name", ""),
+                aliases=result.get("aliases") or [],
+                query_text=query_text,
+                category=category,
+                rows=rows,
+                started_at=started_at,
+                completed_at=datetime.now(timezone.utc),
+            )
+        result["job_id"] = job_id
+        result["query_run_id"] = query_run_id
+        result["run_id"] = query_run_id  # for compatibility
+        result["status"] = "complete"
+        _set_visibility_job(job_id, state="done", stage="Completed", progress=100, result=result)
+    except Exception as exc:  # pragma: no cover
+        _set_visibility_job(job_id, state="error", stage="Failed", progress=100, error=str(exc))
+
+
 def _run_visibility_job(
     job_id: str,
     url: str,
@@ -189,9 +269,19 @@ def _run_visibility_job(
     aliases: list[str] | None,
     llms: list[str] | None,
     competitor_urls: list[str] | None = None,
+    query_text: str | None = None,
+    category: str | None = None,
+    use_cache: bool = False,
+    country_code: str | None = None,
 ) -> None:
-    started_at = datetime.now(timezone.utc)
     competitor_urls = competitor_urls or []
+    if query_text and query_text.strip():
+        _run_visibility_query_job(
+            job_id, url, query_text.strip(), (category or "generic").strip().lower(),
+            brand_name, company_name, aliases, llms, use_cache=use_cache, country_code=country_code,
+        )
+        return
+    started_at = datetime.now(timezone.utc)
     try:
         _set_visibility_job(job_id, state="running", stage="Preparing probe set...", progress=10)
 
@@ -206,6 +296,8 @@ def _run_visibility_job(
             aliases=aliases,
             selected_providers=llms,
             progress_hook=progress_hook,
+            use_cache=use_cache,
+            country_code=country_code,
         )
         _set_visibility_job(job_id, state="running", stage="Persisting run...", progress=97)
         skipped_codes = {"skipped_by_user", "missing_api_key"}
@@ -281,7 +373,11 @@ def _run_visibility_job(
                 progress=min(92, 75 + (idx + 1) * 8),
             )
             comp_result = run_ai_visibility_scan(
-                comp_url, selected_providers=llms, progress_hook=progress_hook
+                comp_url,
+                selected_providers=llms,
+                progress_hook=progress_hook,
+                use_cache=use_cache,
+                country_code=country_code,
             )
             comp_run_payload = {
                 "job_id": job_id,
@@ -389,10 +485,38 @@ def visibility_start() -> tuple[dict, int]:
     if invalid_llms:
         return {"error": f"Invalid llms: {', '.join(invalid_llms)}. Allowed: chatgpt, gemini, claude."}, 400
 
+    # Only run providers that have an API key configured; skip others so progress never shows them
+    availability = _provider_availability_from_env()
+    llms_available = [p for p in llms if availability.get(p, {}).get("available")]
+    if not llms_available:
+        missing = [p for p in llms if p in SUPPORTED_PROVIDERS]
+        return {
+            "error": f"No API key configured for selected provider(s): {', '.join(missing)}. Add the corresponding env var (e.g. OPENAI_API_KEY for chatgpt) or choose another provider."
+        }, 400
+    llms = llms_available
+
     if not url:
         return {"error": "url is required"}, 400
     if not _validate_url(url):
         return {"error": "Invalid URL. Use full http(s) URL."}, 400
+
+    country_code = str(body.get("country_code", "")).strip().upper() or None
+    if not country_code:
+        return {"error": "country_code is required. Select a country from the dropdown."}, 400
+    from agentic_readiness.query_templates import COUNTRY_CODES
+    if country_code not in COUNTRY_CODES:
+        return {"error": f"Invalid country_code: {country_code}. Must be one of the supported countries."}, 400
+
+    query_text = str(body.get("query_text", "")).strip()
+    category = str(body.get("category", "generic")).strip().lower() or "generic"
+    use_cache = bool(body.get("use_cache", False))
+    if query_text:
+        from agentic_readiness.query_templates import CATEGORIES, validate_query_text
+        err = validate_query_text(query_text)
+        if err:
+            return {"error": err}, 400
+        if category not in CATEGORIES:
+            return {"error": f"category must be one of {list(CATEGORIES)}"}, 400
 
     competitor_urls_raw = body.get("competitor_urls", [])
     if not isinstance(competitor_urls_raw, list):
@@ -400,12 +524,18 @@ def visibility_start() -> tuple[dict, int]:
     competitor_urls = [str(u).strip() for u in competitor_urls_raw if str(u).strip()][:2]
     if len(competitor_urls_raw) > 2:
         return {"error": "At most 2 competitor URLs allowed."}, 400
+    if query_text and competitor_urls:
+        return {"error": "Competitor URLs are not supported in query-driven mode."}, 400
     try:
-        validate_url(url)
+        validate_url(url, timeout_sec=60)
         for u in competitor_urls:
-            validate_url(u)
+            validate_url(u, timeout_sec=60)
     except ValueError as e:
-        return {"error": str(e)}, 400
+        msg = str(e)
+        if "timeout" in msg.lower():
+            logging.warning("URL pre-check timed out for %s (or competitor); starting job anyway. %s", url, msg)
+        else:
+            return {"error": msg}, 400
 
     max_concurrent, max_per_day, max_spend = _get_rate_limit_config()
     running = _visibility_running_or_queued_count()
@@ -440,11 +570,50 @@ def visibility_start() -> tuple[dict, int]:
     )
     worker = threading.Thread(
         target=_run_visibility_job,
-        args=(job_id, url, brand_name, company_name, aliases, llms, competitor_urls),
+        args=(job_id, url, brand_name, company_name, aliases, llms, competitor_urls, query_text or None, category if query_text else None, use_cache, country_code),
         daemon=True,
     )
     worker.start()
     return {"job_id": job_id}, 202
+
+
+@app.get("/api/visibility/countries")
+def visibility_countries() -> tuple[dict, int]:
+    """Return curated country list for location dropdown."""
+    from agentic_readiness.query_templates import COUNTRIES
+    return {"countries": [{"code": c[0], "name": c[1]} for c in COUNTRIES]}, 200
+
+
+@app.get("/api/visibility/query-templates")
+def visibility_query_templates() -> tuple[dict, int]:
+    """Phase 4: Return categories and predefined queries for query-driven mode."""
+    from agentic_readiness.query_templates import (
+        CATEGORIES,
+        get_queries_for_category,
+    )
+    queries = {cat: get_queries_for_category(cat) for cat in CATEGORIES}
+    return {"categories": list(CATEGORIES), "queries": queries}, 200
+
+
+@app.get("/api/visibility/query-runs")
+def visibility_query_runs_list() -> tuple[dict, int]:
+    """Phase 4: List recent query runs. Query param: url (optional), limit (default 10)."""
+    url = request.args.get("url", "").strip() or None
+    try:
+        limit = int(request.args.get("limit", 10))
+    except (TypeError, ValueError):
+        limit = 10
+    runs = _visibility_store.list_query_runs(url=url, limit=limit)
+    return {"runs": runs}, 200
+
+
+@app.get("/api/visibility/query-runs/<int:run_id>")
+def visibility_query_run_detail(run_id: int) -> tuple[dict, int]:
+    """Phase 4: Full detail for a query-driven run."""
+    detail = _visibility_store.get_query_run_detail(run_id)
+    if not detail:
+        return {"error": "Query run not found"}, 404
+    return detail, 200
 
 
 @app.get("/api/visibility/status/<job_id>")

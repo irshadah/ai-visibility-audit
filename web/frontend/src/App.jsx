@@ -9,12 +9,14 @@ const DEFAULT_MODES = ["SEO"];
 
 export default function App() {
   const [view, setView] = useState("audit");
+  const [useCache, setUseCache] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [loadingStage, setLoadingStage] = useState("");
   const [error, setError] = useState("");
   const [result, setResult] = useState(null);
   const [visibilityResult, setVisibilityResult] = useState(null);
+  const [lastVisibilityFormValues, setLastVisibilityFormValues] = useState(null);
 
   const modeOrder = useMemo(() => ["GEO", "AEO", "SEO"], []);
 
@@ -82,11 +84,20 @@ export default function App() {
     }
   }
 
-  async function handleVisibilityAnalyze({ url, brandName, companyName, aliases, llms, competitor_urls }) {
-    const overallTimeoutMs = 150000;
+  async function handleVisibilityAnalyze({
+    url,
+    country_code,
+    brandName,
+    companyName,
+    aliases,
+    llms,
+    competitor_urls,
+    query_text,
+    category,
+    use_cache
+  }) {
+    const overallTimeoutMs = 300000;
     const startedAt = Date.now();
-    let lastProgress = -1;
-    let lastUpdateAt = Date.now();
     setIsLoading(true);
     setLoadingProgress(5);
     setLoadingStage("Queued");
@@ -97,11 +108,15 @@ export default function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           url,
+          country_code: country_code || "",
           brand_name: brandName || "",
           company_name: companyName || "",
           aliases: aliases || [],
           llms: llms || ["gemini"],
-          competitor_urls: competitor_urls || []
+          competitor_urls: competitor_urls || [],
+          query_text: query_text || "",
+          category: category || "generic",
+          use_cache: use_cache || false
         })
       });
       const startData = await startRes.json();
@@ -114,6 +129,18 @@ export default function App() {
       const jobId = startData?.job_id;
       if (!jobId) throw new Error("Backend did not return visibility job_id.");
 
+      setLastVisibilityFormValues({
+        url,
+        country_code: country_code || "",
+        brandName: brandName || "",
+        companyName: companyName || "",
+        aliases: aliases || [],
+        llms: llms || ["gemini"],
+        competitor_urls: competitor_urls || [],
+        query_text: query_text || "",
+        category: category || "generic"
+      });
+
       let finalResult = null;
       while (Date.now() - startedAt < overallTimeoutMs) {
         await new Promise((r) => setTimeout(r, 1300));
@@ -124,13 +151,6 @@ export default function App() {
         }
         setLoadingProgress(Number(statusData.progress || 0));
         setLoadingStage(statusData.stage || "Processing visibility...");
-        if (Number(statusData.progress || 0) !== lastProgress) {
-          lastProgress = Number(statusData.progress || 0);
-          lastUpdateAt = Date.now();
-        }
-        if (Date.now() - lastUpdateAt > 80000) {
-          throw new Error("Visibility analysis appears stuck. Please retry.");
-        }
         if (statusData.state === "done") {
           finalResult = statusData.result;
           break;
@@ -140,7 +160,7 @@ export default function App() {
         }
       }
       if (!finalResult) {
-        throw new Error("Visibility analysis timed out after 150s. Please retry.");
+        throw new Error("Visibility analysis timed out after 5 minutes. Please retry.");
       }
       setVisibilityResult(finalResult);
     } catch (err) {
@@ -155,8 +175,24 @@ export default function App() {
   return (
     <div className="app-shell">
       <header className="page-header">
-        <h1>Agentic Readiness Audit</h1>
-        <p>Analyze URLs for readiness and AI visibility quality.</p>
+        <div className="page-header-left">
+          <h1>Agentic Readiness Audit</h1>
+          <p>Analyze URLs for readiness and AI visibility quality.</p>
+        </div>
+        {view === "visibility" && (
+          <div className="cache-toggle-wrap">
+            <span className="cache-toggle-label">Cache</span>
+            <button
+              type="button"
+              className={`cache-toggle-btn ${useCache ? "cache-toggle-btn--on" : ""}`}
+              onClick={() => setUseCache((v) => !v)}
+              title={useCache ? "Cache on – reusing stored responses" : "Cache off – calling LLM API"}
+            >
+              <span className="cache-toggle-off">Off</span>
+              <span className="cache-toggle-on">On</span>
+            </button>
+          </div>
+        )}
       </header>
 
       <div className="view-switcher">
@@ -179,7 +215,12 @@ export default function App() {
       {view === "audit" ? (
         <ScoreForm defaultModes={DEFAULT_MODES} onAnalyze={handleAnalyze} isLoading={isLoading} />
       ) : (
-        <VisibilityForm onAnalyze={handleVisibilityAnalyze} isLoading={isLoading} />
+        <VisibilityForm
+          onAnalyze={handleVisibilityAnalyze}
+          isLoading={isLoading}
+          useCache={useCache}
+          initialValues={lastVisibilityFormValues}
+        />
       )}
 
       {error ? <div className="error-box">{error}</div> : null}
@@ -190,9 +231,12 @@ export default function App() {
       {view === "visibility" && visibilityResult ? (
         <VisibilityDashboard
           result={visibilityResult}
-          onSelectRunId={async (runId) => {
+          onSelectRunId={async (runId, isQueryRun) => {
             try {
-              const res = await fetch(`/api/visibility/runs/${runId}`);
+              const path = isQueryRun
+                ? `/api/visibility/query-runs/${runId}`
+                : `/api/visibility/runs/${runId}`;
+              const res = await fetch(path);
               const data = await res.json();
               if (res.ok) setVisibilityResult(data);
               else setError(data?.error || "Failed to load run");
@@ -202,8 +246,6 @@ export default function App() {
           }}
         />
       ) : null}
-
-      <footer className="app-footer">Powered by Agentic Readiness Engine</footer>
     </div>
   );
 }

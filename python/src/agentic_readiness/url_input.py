@@ -46,7 +46,7 @@ def _domain_from_url(url: str) -> str:
         return ""
 
 
-def validate_url(url: str, timeout_sec: int = 10) -> None:
+def validate_url(url: str, timeout_sec: int = 60) -> None:
     """Validate URL before any LLM call (TASK 2b.4). Raises ValueError with message on failure."""
     u = (url or "").strip()
     if not u:
@@ -68,7 +68,9 @@ def validate_url(url: str, timeout_sec: int = 10) -> None:
                 "User-Agent": (
                     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
                     "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
-                )
+                ),
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9,de;q=0.8",
             },
         )
         with urlopen(req, timeout=timeout_sec) as resp:
@@ -187,8 +189,23 @@ def fetch_html(
                     f"Failed to fetch URL (403): {url}. Browser fallback failed: {fallback_error}"
                 ) from exc
         raise RuntimeError(f"Failed to fetch URL ({exc.code}): {url}") from exc
-    except URLError as exc:
-        raise RuntimeError(f"Failed to fetch URL: {url} ({exc.reason})") from exc
+    except (URLError, TimeoutError, OSError) as exc:
+        is_timeout = isinstance(exc, TimeoutError) or (
+            isinstance(exc, URLError) and exc.reason and ("timeout" in str(exc.reason).lower() or "timed out" in str(exc.reason).lower())
+        )
+        if is_timeout and progress_hook:
+            progress_hook("Initial fetch timed out. Trying browser fallback...", 35)
+        if is_timeout:
+            fallback_html, fallback_error, fallback_meta = _fetch_html_via_playwright(
+                url, timeout_sec=timeout_sec, progress_hook=progress_hook
+            )
+            if fallback_html:
+                return FetchResult(html=fallback_html, meta=fallback_meta)
+            if fallback_error:
+                raise RuntimeError(
+                    f"Failed to fetch URL (timeout): {url}. Browser fallback failed: {fallback_error}"
+                ) from exc
+        raise RuntimeError(f"Failed to fetch URL: {url} ({getattr(exc, 'reason', exc)})") from exc
 
 
 def _fetch_html_via_playwright(

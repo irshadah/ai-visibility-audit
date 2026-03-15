@@ -100,7 +100,18 @@ class VisibilityConfig:
         )
 
 
-def build_probe_prompts(domain: str, brand_name: str, company_name: str) -> List[Dict[str, str]]:
+def build_probe_prompts(
+    domain: str,
+    brand_name: str,
+    company_name: str,
+    country_code: Optional[str] = None,
+) -> List[Dict[str, str]]:
+    from .query_templates import get_country_name
+
+    location_suffix = ""
+    if country_code:
+        country_name = get_country_name(country_code)
+        location_suffix = f" Assume the user is in {country_name}. Provide recommendations relevant to that market."
     topics = [
         ("brand_overview", f"What is {brand_name} known for?"),
         ("brand_company", f"Tell me about the company behind {brand_name}."),
@@ -115,7 +126,14 @@ def build_probe_prompts(domain: str, brand_name: str, company_name: str) -> List
         ("seo_like_query", f"{brand_name} reviews and ratings summary."),
         ("domain_specific", f"What does {domain} offer to customers?"),
     ]
-    return [{"topic_key": t[0], "topic": t[0].replace("_", " ").title(), "prompt": t[1]} for t in topics]
+    return [
+        {
+            "topic_key": t[0],
+            "topic": t[0].replace("_", " ").title(),
+            "prompt": t[1] + location_suffix,
+        }
+        for t in topics
+    ]
 
 
 def _call_openai(prompt: str, cfg: VisibilityConfig) -> str:
@@ -127,7 +145,7 @@ def _call_openai(prompt: str, cfg: VisibilityConfig) -> str:
         model=cfg.openai_model,
         messages=[{"role": "user", "content": prompt}],
         temperature=0,
-        max_tokens=400,
+        max_tokens=8192,
     )
     try:
         content = resp.choices[0].message.content or ""
@@ -157,9 +175,51 @@ def _call_gemini(prompt: str, cfg: VisibilityConfig) -> str:
     resp = client.models.generate_content(
         model=cfg.gemini_model,
         contents=prompt,
-        config={"temperature": 0, "max_output_tokens": 400},
+        config={"temperature": 0, "max_output_tokens": 8192},
     )
     return (resp.text or "").strip()
+
+
+def _call_gemini_with_grounding(prompt: str, cfg: VisibilityConfig) -> str:
+    """Gemini with google_search grounding for query-driven probes. Phase 4."""
+    from google import genai
+    from google.genai import types
+
+    if not cfg.gemini_api_key:
+        client = genai.Client()
+    else:
+        client = genai.Client(api_key=cfg.gemini_api_key)
+
+    grounding_tool = types.Tool(google_search=types.GoogleSearch())
+    config = types.GenerateContentConfig(
+        temperature=0,
+        max_output_tokens=8192,
+        tools=[grounding_tool],
+    )
+    resp = client.models.generate_content(
+        model=cfg.gemini_model,
+        contents=prompt,
+        config=config,
+    )
+    text = (resp.text or "").strip()
+    try:
+        if getattr(resp, "candidates", None):
+            parts_text = []
+            for c in resp.candidates:
+                content = getattr(c, "content", None) or getattr(c, "output", None)
+                if content:
+                    parts = getattr(content, "parts", None)
+                    if parts:
+                        for p in parts:
+                            pt = getattr(p, "text", None)
+                            if pt is not None:
+                                parts_text.append(str(pt))
+            from_parts = "\n".join(parts_text).strip()
+            if len(from_parts) > len(text):
+                text = from_parts
+    except Exception:
+        pass
+    return text
 
 
 def _call_claude(prompt: str, cfg: VisibilityConfig) -> str:
@@ -168,7 +228,7 @@ def _call_claude(prompt: str, cfg: VisibilityConfig) -> str:
     client = Anthropic(api_key=cfg.anthropic_api_key)
     resp = client.messages.create(
         model=cfg.anthropic_model,
-        max_tokens=400,
+        max_tokens=8192,
         temperature=0,
         messages=[{"role": "user", "content": prompt}],
     )
@@ -201,9 +261,18 @@ def _provider_call(provider: str, prompt: str, cfg: VisibilityConfig) -> str:
 
 
 def _provider_call_with_retry(
-    provider: str, prompt: str, cfg: VisibilityConfig, max_attempts: int = 3
+    provider: str,
+    prompt: str,
+    cfg: VisibilityConfig,
+    max_attempts: int = 3,
+    use_cache: bool = False,
 ) -> tuple[str, str]:
     """Returns (response_text, probe_status). probe_status is 'success', 'timeout', or 'failed'."""
+    if use_cache:
+        from .llm_cache import get as cache_get, set_ as cache_set
+        cached = cache_get(provider, prompt)
+        if cached is not None:
+            return (cached, "success")
     backoff = [1.0, 3.0]
     last_exc = None
     for attempt in range(max_attempts):
@@ -211,6 +280,8 @@ def _provider_call_with_retry(
             if attempt > 0:
                 time.sleep(backoff[attempt - 1])
             text = _provider_call(provider, prompt, cfg)
+            if use_cache and text:
+                cache_set(provider, prompt, text)
             return (text, "success")
         except Exception as exc:
             last_exc = exc
@@ -283,6 +354,8 @@ def run_ai_visibility_scan(
     aliases: Optional[List[str]] = None,
     selected_providers: Optional[List[str]] = None,
     progress_hook=None,
+    use_cache: bool = False,
+    country_code: Optional[str] = None,
 ) -> Dict[str, Any]:
     cfg = VisibilityConfig.from_env()
     extracted = _extract_brand_info(url)
@@ -290,7 +363,9 @@ def run_ai_visibility_scan(
     brand = (brand_name or extracted["brand_name"]).strip()
     company = (company_name or extracted["company_name"]).strip()
     all_aliases = _normalize_aliases(brand, company, aliases or [])
-    prompts = build_probe_prompts(domain, brand, company)[: max(1, cfg.max_prompts)]
+    prompts = build_probe_prompts(domain, brand, company, country_code=country_code)[
+        : max(1, cfg.max_prompts)
+    ]
     provider_status: Dict[str, Dict[str, Any]] = {}
     provider_counts: Dict[str, Dict[str, Any]] = {}
     probe_rows: List[Dict[str, Any]] = []
@@ -337,7 +412,9 @@ def run_ai_visibility_scan(
                     min(92, 15 + int(((idx + 1) / max(1, len(prompts))) * 72)),
                 )
             t0 = time.time()
-            response_text, probe_status = _provider_call_with_retry(provider, prompt, cfg)
+            response_text, probe_status = _provider_call_with_retry(
+                provider, prompt, cfg, use_cache=use_cache
+            )
             latency_ms = int((time.time() - t0) * 1000)
             if probe_status == "success":
                 analysis = _analyze_response(response_text, all_aliases, domain)
@@ -431,6 +508,7 @@ def run_ai_visibility_scan(
         "brand": brand,
         "company_name": company,
         "aliases": all_aliases,
+        "country_code": country_code,
         "prompt_set_version": PROMPT_SET_VERSION,
         "scoring_version": SCORING_VERSION,
         "overall_score": score["overall_score"],
@@ -447,5 +525,227 @@ def run_ai_visibility_scan(
         "probes": probe_rows,
         "cost_estimate_usd": round(total_api_calls * 0.002, 4),
         "latency_ms": elapsed_ms,
+    }
+
+
+# --- Phase 4: Query-driven analysis ---
+
+QUERY_PROBE_N_RUNS = 4
+NUMBERED_LINE_RE = re.compile(r"^(\d+)[.)]\s*(.+)$", re.MULTILINE)
+
+
+def build_query_probe_prompt(
+    query_text: str,
+    category: str,
+    brand_name: str,
+    country_code: Optional[str] = None,
+) -> str:
+    """Hybrid prompt: conversational answer + numbered list for position extraction."""
+    from .query_templates import get_country_name
+
+    cat_label = "apparel" if category.lower() == "apparel" else "brands"
+    base = (
+        f"First, answer conversationally: For '{query_text}', what {cat_label} would you recommend?\n"
+        f"Then, list exactly 10 {cat_label} for '{query_text}' as a numbered list 1-10 only. "
+        "Format: 1. Brand A, 2. Brand B, 3. Brand C, 4. Brand D, 5. Brand E, 6. Brand F, 7. Brand G, 8. Brand H, 9. Brand I, 10. Brand J."
+    )
+    if country_code:
+        country_name = get_country_name(country_code)
+        base += f" Assume the user is in {country_name}. Provide recommendations relevant to that market."
+    return base
+
+
+def _extract_position_from_response(response_text: str, aliases: List[str]) -> Optional[int]:
+    """Extract brand position from numbered list. Returns position (1-10) or None."""
+    text = response_text or ""
+    for m in NUMBERED_LINE_RE.finditer(text):
+        pos = int(m.group(1))
+        line_text = m.group(2).strip()
+        if 1 <= pos <= 10 and _contains_alias(line_text, aliases):
+            return pos
+    return None
+
+
+def _query_provider_call(
+    provider: str,
+    prompt: str,
+    cfg: VisibilityConfig,
+    use_grounding: bool = False,
+    use_cache: bool = False,
+) -> tuple[str, str]:
+    """Returns (response_text, probe_status). Gemini can use grounding."""
+    _CACHE_VERSION = "v3"
+    cache_provider = f"{provider}_grounding_{_CACHE_VERSION}" if (provider == "gemini" and use_grounding) else provider
+    if use_cache:
+        from .llm_cache import get as cache_get, set_ as cache_set
+        cached = cache_get(cache_provider, prompt)
+        if cached is not None:
+            return (cached, "success")
+    if provider == "gemini" and use_grounding:
+        try:
+            text = _call_gemini_with_grounding(prompt, cfg)
+            if use_cache and text:
+                cache_set(cache_provider, prompt, text)
+            return (text, "success")
+        except Exception as exc:
+            msg = str(exc).lower()
+            return ("", "timeout" if "timeout" in msg or "timed out" in msg else "failed")
+    return _provider_call_with_retry(provider, prompt, cfg, use_cache=use_cache)
+
+
+def run_query_probe_multi(
+    url: str,
+    query_text: str,
+    brand_name: str,
+    company_name: str,
+    aliases: List[str],
+    category: str,
+    provider: str,
+    cfg: VisibilityConfig,
+    n_runs: int = QUERY_PROBE_N_RUNS,
+    use_cache: bool = False,
+    country_code: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Run probe n_runs times per (URL, query, provider); aggregate."""
+    prompt = build_query_probe_prompt(query_text, category, brand_name, country_code=country_code)
+    all_aliases = _normalize_aliases(brand_name, company_name, aliases)
+    use_grounding = provider == "gemini"
+
+    positions: List[Optional[int]] = []
+    raw_responses: List[str] = []
+    mentioned_count = 0
+    total_latency_ms = 0
+
+    for _ in range(n_runs):
+        t0 = time.time()
+        response_text, probe_status = _query_provider_call(
+            provider, prompt, cfg, use_grounding, use_cache=use_cache
+        )
+        latency_ms = int((time.time() - t0) * 1000)
+        total_latency_ms += latency_ms
+
+        if probe_status != "success":
+            positions.append(None)
+            raw_responses.append("")
+            continue
+
+        raw_responses.append(response_text)
+        mentioned = bool(_contains_alias(response_text, all_aliases))
+        if mentioned:
+            mentioned_count += 1
+        pos = _extract_position_from_response(response_text, all_aliases)
+        positions.append(pos)
+
+    n = len(positions)
+    valid_positions = [p for p in positions if p is not None]
+    avg_position: Optional[float] = None
+    if valid_positions:
+        avg_position = round(sum(valid_positions) / len(valid_positions), 2)
+    appearance_rate_pct = round(100.0 * mentioned_count / max(1, n), 2)
+    in_top_5 = any(p is not None and p <= 5 for p in positions)
+    in_top_10 = any(p is not None and p <= 10 for p in positions)
+    evidence_text = raw_responses[0] if raw_responses else None
+
+    return {
+        "mentioned": mentioned_count > 0,
+        "in_top_5": in_top_5,
+        "in_top_10": in_top_10,
+        "appearance_rate_pct": appearance_rate_pct,
+        "avg_position": avg_position,
+        "positions": positions,
+        "raw_responses": raw_responses,
+        "evidence_text": evidence_text,
+        "run_count": n,
+        "latency_ms": total_latency_ms,
+    }
+
+
+def run_query_driven_scan(
+    url: str,
+    query_text: str,
+    category: str,
+    *,
+    brand_name: Optional[str] = None,
+    company_name: Optional[str] = None,
+    aliases: Optional[List[str]] = None,
+    selected_providers: Optional[List[str]] = None,
+    progress_hook=None,
+    use_cache: bool = False,
+    country_code: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Phase 4: Query-driven visibility scan. One query per run, multi-run aggregation per provider."""
+    from .query_templates import CATEGORIES, validate_query_text
+
+    err = validate_query_text(query_text)
+    if err:
+        raise ValueError(err)
+    cat = (category or "generic").strip().lower()
+    if cat not in CATEGORIES:
+        raise ValueError(f"category must be one of {CATEGORIES}")
+
+    cfg = VisibilityConfig.from_env()
+    extracted = _extract_brand_info(url)
+    domain = extracted["domain"]
+    brand = (brand_name or extracted["brand_name"]).strip()
+    company = (company_name or extracted["company_name"]).strip()
+    all_aliases = _normalize_aliases(brand, company, aliases or [])
+
+    if selected_providers:
+        allowed = {p for p in selected_providers if p in SUPPORTED_PROVIDERS}
+        providers_for_run = [p for p in SUPPORTED_PROVIDERS if p in allowed]
+    else:
+        providers_for_run = list(SUPPORTED_PROVIDERS)
+
+    provider_status: Dict[str, Dict[str, Any]] = {}
+    by_provider: Dict[str, Dict[str, Any]] = {}
+    started = time.time()
+    total_cost = 0.0
+
+    for p in SUPPORTED_PROVIDERS:
+        if p not in providers_for_run:
+            provider_status[p] = {"status": "skipped_by_user"}
+        elif not _provider_available(p, cfg):
+            provider_status[p] = {"status": "missing_api_key"}
+        else:
+            provider_status[p] = {"status": "available"}
+
+    providers_to_probe = [p for p in providers_for_run if _provider_available(p, cfg)]
+    for idx, provider in enumerate(providers_to_probe):
+        if progress_hook:
+            progress_hook(
+                f"Query probe {provider} ({idx + 1}/{len(providers_to_probe)})...",
+                min(90, 20 + int(((idx + 1) / max(1, len(providers_to_probe))) * 65)),
+            )
+        agg = run_query_probe_multi(
+            url=url,
+            query_text=query_text,
+            brand_name=brand,
+            company_name=company,
+            aliases=all_aliases,
+            category=cat,
+            provider=provider,
+            cfg=cfg,
+            use_cache=use_cache,
+            country_code=country_code,
+        )
+        by_provider[provider] = agg
+        total_cost += QUERY_PROBE_N_RUNS * 0.002
+
+    elapsed_ms = int((time.time() - started) * 1000)
+
+    return {
+        "url": url,
+        "domain": domain,
+        "brand": brand,
+        "company_name": company,
+        "aliases": all_aliases,
+        "query_text": query_text,
+        "category": cat,
+        "country_code": country_code,
+        "provider_status": provider_status,
+        "by_provider": by_provider,
+        "cost_estimate_usd": round(total_cost, 4),
+        "latency_ms": elapsed_ms,
+        "run_type": "query_driven",
     }
 
