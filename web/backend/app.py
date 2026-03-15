@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import json
 import logging
 import os
 import sys
@@ -48,6 +49,11 @@ _jobs_lock = threading.Lock()
 _visibility_jobs: dict[str, dict] = {}
 _visibility_jobs_lock = threading.Lock()
 _visibility_store = VisibilityStore(os.getenv("DATABASE_URL", ""))
+_job_store_root = Path(os.getenv("JOB_STORE_DIR", "/tmp/geo-audit-jobs"))
+_readiness_store = _job_store_root / "readiness"
+_visibility_store_dir = _job_store_root / "visibility"
+_readiness_store.mkdir(parents=True, exist_ok=True)
+_visibility_store_dir.mkdir(parents=True, exist_ok=True)
 
 # Rate limits (TASK 2b.2): in-memory concurrent jobs; daily count and spend from DB
 def _get_rate_limit_config() -> tuple[int, int, float]:
@@ -121,6 +127,7 @@ def _set_job(job_id: str, **updates) -> None:
         job = _jobs.get(job_id, {})
         job.update(updates)
         _jobs[job_id] = job
+    _persist_job_snapshot(job_id, job, visibility=False)
 
 
 def _set_visibility_job(job_id: str, **updates) -> None:
@@ -128,6 +135,57 @@ def _set_visibility_job(job_id: str, **updates) -> None:
         job = _visibility_jobs.get(job_id, {})
         job.update(updates)
         _visibility_jobs[job_id] = job
+    _persist_job_snapshot(job_id, job, visibility=True)
+
+
+def _job_file(job_id: str, visibility: bool = False) -> Path:
+    base = _visibility_store_dir if visibility else _readiness_store
+    return base / f"{job_id}.json"
+
+
+def _persist_job_snapshot(job_id: str, payload: dict, visibility: bool = False) -> None:
+    path = _job_file(job_id, visibility=visibility)
+    tmp = path.with_suffix(".tmp")
+    try:
+        tmp.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+        tmp.replace(path)
+    except Exception as exc:
+        app.logger.warning("Could not persist job snapshot (%s): %s", job_id, exc)
+
+
+def _load_job_snapshot(job_id: str, visibility: bool = False) -> dict | None:
+    path = _job_file(job_id, visibility=visibility)
+    if not path.exists():
+        return None
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        app.logger.warning("Could not load job snapshot (%s): %s", job_id, exc)
+        return None
+
+
+def _get_job(job_id: str) -> dict | None:
+    with _jobs_lock:
+        job = _jobs.get(job_id)
+    if job:
+        return job
+    snapshot = _load_job_snapshot(job_id, visibility=False)
+    if snapshot:
+        with _jobs_lock:
+            _jobs[job_id] = snapshot
+    return snapshot
+
+
+def _get_visibility_job(job_id: str) -> dict | None:
+    with _visibility_jobs_lock:
+        job = _visibility_jobs.get(job_id)
+    if job:
+        return job
+    snapshot = _load_job_snapshot(job_id, visibility=True)
+    if snapshot:
+        with _visibility_jobs_lock:
+            _visibility_jobs[job_id] = snapshot
+    return snapshot
 
 
 def _run_score_job(job_id: str, url: str, modes: list[str], timeout_sec: int) -> None:
@@ -458,8 +516,7 @@ def score_start() -> tuple[dict, int]:
 
 @app.get("/api/score/status/<job_id>")
 def score_status(job_id: str) -> tuple[dict, int]:
-    with _jobs_lock:
-        job = _jobs.get(job_id)
+    job = _get_job(job_id)
     if not job:
         return {"error": "Job not found"}, 404
     return job, 200
@@ -618,8 +675,7 @@ def visibility_query_run_detail(run_id: int) -> tuple[dict, int]:
 
 @app.get("/api/visibility/status/<job_id>")
 def visibility_status(job_id: str) -> tuple[dict, int]:
-    with _visibility_jobs_lock:
-        job = _visibility_jobs.get(job_id)
+    job = _get_visibility_job(job_id)
     if not job:
         return {"error": "Job not found"}, 404
     return job, 200
