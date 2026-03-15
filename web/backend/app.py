@@ -602,7 +602,16 @@ def visibility_start() -> tuple[dict, int]:
             429,
             {"Retry-After": "60"},
         )
-    today = _visibility_store.get_today_completed_count_and_spend()
+    try:
+        today = _visibility_store.get_today_completed_count_and_spend()
+    except Exception as exc:
+        app.logger.exception("Visibility preflight failed before queueing job: %s", exc)
+        return {
+            "error": (
+                "Visibility preflight failed. Ensure DATABASE_URL is valid and DB migrations are applied "
+                "(run: python scripts/run_migrations.py)."
+            )
+        }, 500
     if today["runs_count"] >= max_per_day:
         return (
             {"error": "Daily scan limit reached", "retry_after": 3600},

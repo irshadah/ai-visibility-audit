@@ -119,12 +119,23 @@ export default function App() {
           use_cache: use_cache || false
         })
       });
-      const startData = await startRes.json();
+
+      const startContentType = startRes.headers.get("content-type") || "";
+      const startIsJson = startContentType.includes("application/json");
+      let startData = null;
+      let startRawText = "";
+      if (startIsJson) {
+        startData = await startRes.json();
+      } else {
+        startRawText = await startRes.text();
+      }
+
       if (!startRes.ok) {
+        const backendMsg = startData?.error || startRawText?.trim();
         if (startRes.status === 429) {
-          throw new Error(startData?.error || "Rate limit exceeded. Try again later.");
+          throw new Error(backendMsg || "Rate limit exceeded. Try again later.");
         }
-        throw new Error(startData?.error || `Failed to start visibility scan (${startRes.status})`);
+        throw new Error(backendMsg || `Failed to start visibility scan (${startRes.status})`);
       }
       const jobId = startData?.job_id;
       if (!jobId) throw new Error("Backend did not return visibility job_id.");
@@ -145,9 +156,19 @@ export default function App() {
       while (Date.now() - startedAt < overallTimeoutMs) {
         await new Promise((r) => setTimeout(r, 1300));
         const statusRes = await fetch(`/api/visibility/status/${jobId}`);
-        const statusData = await statusRes.json();
+
+        const statusContentType = statusRes.headers.get("content-type") || "";
+        const statusIsJson = statusContentType.includes("application/json");
+        let statusData = null;
+        let statusRawText = "";
+        if (statusIsJson) {
+          statusData = await statusRes.json();
+        } else {
+          statusRawText = await statusRes.text();
+        }
+
         if (!statusRes.ok) {
-          throw new Error(statusData?.error || `Failed to read visibility status (${statusRes.status})`);
+          throw new Error(statusData?.error || statusRawText?.trim() || `Failed to read visibility status (${statusRes.status})`);
         }
         setLoadingProgress(Number(statusData.progress || 0));
         setLoadingStage(statusData.stage || "Processing visibility...");
