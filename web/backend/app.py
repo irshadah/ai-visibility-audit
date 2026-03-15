@@ -606,12 +606,20 @@ def visibility_start() -> tuple[dict, int]:
         today = _visibility_store.get_today_completed_count_and_spend()
     except Exception as exc:
         app.logger.exception("Visibility preflight failed before queueing job: %s", exc)
-        return {
-            "error": (
-                "Visibility preflight failed. Ensure DATABASE_URL is valid and DB migrations are applied "
-                "(run: python scripts/run_migrations.py)."
-            )
-        }, 500
+        # Railway resilience: try one-time schema bootstrap, then retry preflight.
+        try:
+            _visibility_store.ensure_schema()
+            today = _visibility_store.get_today_completed_count_and_spend()
+            app.logger.info("Visibility schema bootstrap completed during preflight.")
+        except Exception as boot_exc:
+            app.logger.exception("Visibility schema bootstrap failed: %s", boot_exc)
+            return {
+                "error": (
+                    "Visibility preflight failed. DATABASE_URL may be invalid, missing permissions, or "
+                    "schema migrations are not applied. "
+                    f"Root cause: {boot_exc}"
+                )
+            }, 500
     if today["runs_count"] >= max_per_day:
         return (
             {"error": "Daily scan limit reached", "retry_after": 3600},

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from datetime import datetime, timezone, timedelta
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 from urllib.parse import urlparse, urlunparse
 
@@ -121,6 +122,29 @@ class VisibilityStore:
         except Exception as exc:  # pragma: no cover
             raise RuntimeError("psycopg is not installed.") from exc
         return psycopg.connect(self.database_url)
+
+    def ensure_schema(self) -> bool:
+        """
+        Best-effort schema bootstrap for production environments.
+        Runs SQL files in order and returns True when applied successfully.
+        """
+        if not self.enabled:
+            return False
+        repo_root = Path(__file__).resolve().parents[3]
+        sql_files = [
+            repo_root / "scripts" / "sql" / "visibility_schema.sql",
+            repo_root / "scripts" / "sql" / "visibility_schema_v2.sql",
+            repo_root / "scripts" / "sql" / "visibility_schema_query_runs.sql",
+        ]
+        for path in sql_files:
+            if not path.exists():
+                raise RuntimeError(f"Missing migration file: {path}")
+        with self._connect() as conn:
+            with conn.cursor() as cur:
+                for path in sql_files:
+                    cur.execute(path.read_text(encoding="utf-8"))
+            conn.commit()
+        return True
 
     def insert_run(self, run: Dict[str, Any]) -> Optional[int]:
         if not self.enabled:
