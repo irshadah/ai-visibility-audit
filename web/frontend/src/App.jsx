@@ -9,7 +9,7 @@ const DEFAULT_MODES = ["SEO"];
 
 export default function App() {
   const [view, setView] = useState("audit");
-  const [useCache, setUseCache] = useState(false);
+  const [useCache, setUseCache] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [loadingStage, setLoadingStage] = useState("");
@@ -116,7 +116,7 @@ export default function App() {
           competitor_urls: competitor_urls || [],
           query_text: query_text || "",
           category: category || "generic",
-          use_cache: use_cache || false
+          use_cache: use_cache ?? useCache
         })
       });
 
@@ -153,6 +153,8 @@ export default function App() {
       });
 
       let finalResult = null;
+      let transientFailures = 0;
+      let maxProgressSeen = 5;
       while (Date.now() - startedAt < overallTimeoutMs) {
         await new Promise((r) => setTimeout(r, 1300));
         const statusRes = await fetch(`/api/visibility/status/${jobId}`);
@@ -168,10 +170,24 @@ export default function App() {
         }
 
         if (!statusRes.ok) {
+          const isTransient = [429, 502, 503, 504].includes(statusRes.status);
+          if (isTransient) {
+            transientFailures += 1;
+            setLoadingStage("Service is busy, retrying status...");
+            if (transientFailures <= 30) {
+              continue;
+            }
+          }
           throw new Error(statusData?.error || statusRawText?.trim() || `Failed to read visibility status (${statusRes.status})`);
         }
-        setLoadingProgress(Number(statusData.progress || 0));
-        setLoadingStage(statusData.stage || "Processing visibility...");
+        transientFailures = 0;
+        const newProgress = Number(statusData.progress ?? 0);
+        const isDoneOrError = statusData.state === "done" || statusData.state === "error";
+        if (isDoneOrError || newProgress >= maxProgressSeen) {
+          maxProgressSeen = Math.max(maxProgressSeen, newProgress);
+          setLoadingProgress(newProgress);
+          setLoadingStage(statusData.stage || "Processing visibility...");
+        }
         if (statusData.state === "done") {
           finalResult = statusData.result;
           break;

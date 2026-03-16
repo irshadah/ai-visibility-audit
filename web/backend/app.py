@@ -165,27 +165,23 @@ def _load_job_snapshot(job_id: str, visibility: bool = False) -> dict | None:
 
 
 def _get_job(job_id: str) -> dict | None:
-    with _jobs_lock:
-        job = _jobs.get(job_id)
-    if job:
-        return job
     snapshot = _load_job_snapshot(job_id, visibility=False)
     if snapshot:
         with _jobs_lock:
             _jobs[job_id] = snapshot
-    return snapshot
+        return snapshot
+    with _jobs_lock:
+        return _jobs.get(job_id)
 
 
 def _get_visibility_job(job_id: str) -> dict | None:
-    with _visibility_jobs_lock:
-        job = _visibility_jobs.get(job_id)
-    if job:
-        return job
     snapshot = _load_job_snapshot(job_id, visibility=True)
     if snapshot:
         with _visibility_jobs_lock:
             _visibility_jobs[job_id] = snapshot
-    return snapshot
+        return snapshot
+    with _visibility_jobs_lock:
+        return _visibility_jobs.get(job_id)
 
 
 def _run_score_job(job_id: str, url: str, modes: list[str], timeout_sec: int) -> None:
@@ -566,7 +562,7 @@ def visibility_start() -> tuple[dict, int]:
 
     query_text = str(body.get("query_text", "")).strip()
     category = str(body.get("category", "generic")).strip().lower() or "generic"
-    use_cache = bool(body.get("use_cache", False))
+    use_cache = bool(body.get("use_cache", True))
     if query_text:
         from agentic_readiness.query_templates import CATEGORIES, validate_query_text
         err = validate_query_text(query_text)
