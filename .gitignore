@@ -5,3 +5,7 @@ __pycache__/
 *.pyc
 .history
 docs
+web/frontend/dist/
+web/frontend/node_modules/
+node_modules/
+.DS_Store

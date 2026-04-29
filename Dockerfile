@@ -32,4 +32,4 @@ ENV PYTHONPATH=/app/python/src
 ENV FLASK_ENV=production
 EXPOSE 5001
 
-CMD ["sh", "-c", "exec gunicorn -w 2 -b 0.0.0.0:${PORT:-5001} app:app"]
+CMD ["sh", "-c", "exec gunicorn --worker-class gthread --workers ${GUNICORN_WORKERS:-2} --threads ${GUNICORN_THREADS:-8} --timeout ${GUNICORN_TIMEOUT:-180} --keep-alive ${GUNICORN_KEEPALIVE:-5} -b 0.0.0.0:${PORT:-5001} app:app"]
